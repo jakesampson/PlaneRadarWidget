@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Plane Radar",
+        "description": "Sets up the Plane Radar integration. It serves the radar card at `/api/plane_radar/plane-radar-card.js` and relays ADS-B aircraft data to your dashboards. No configuration is required — add the card resource after setup (see the documentation), then drop the Plane Radar card into a dashboard."
+      }
+    },
+    "abort": {
+      "already_configured": "The Plane Radar integration is already set up."
+    }
+  }
+}
