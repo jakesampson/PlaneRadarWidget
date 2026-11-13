@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2026-11-13
+
+- Added a `height` option (default 360 px) that caps the radar scope height,
+  so the card stays compact on wide dashboards instead of expanding to a
+  full-width square. Set `height: 0` to restore the square-from-width
+  behaviour
+- The scope canvas stays square and centred inside a wider card, and the
+  flight details panel matches its width
+- `getCardSize()` now reflects the configured height
+
 ## [0.3.0] - 2026-11-13
 
 - Aircraft positions now update only when the sweep passes over them. Polled

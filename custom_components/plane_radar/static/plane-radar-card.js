@@ -45,10 +45,10 @@ const Ft = (i) => new Tt(typeof i == "string" ? i : i + "", void 0, ct), jt = (i
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: Gt, defineProperty: qt, getOwnPropertyDescriptor: Wt, getOwnPropertyNames: Kt, getOwnPropertySymbols: Vt, getPrototypeOf: Jt } = Object, et = globalThis, bt = et.trustedTypes, Xt = bt ? bt.emptyScript : "", Zt = et.reactiveElementPolyfillSupport, B = (i, t) => i, Y = { toAttribute(i, t) {
+const { is: qt, defineProperty: Gt, getOwnPropertyDescriptor: Wt, getOwnPropertyNames: Kt, getOwnPropertySymbols: Vt, getPrototypeOf: Xt } = Object, et = globalThis, bt = et.trustedTypes, Jt = bt ? bt.emptyScript : "", Zt = et.reactiveElementPolyfillSupport, B = (i, t) => i, Y = { toAttribute(i, t) {
   switch (t) {
     case Boolean:
-      i = i ? Xt : null;
+      i = i ? Jt : null;
       break;
     case Object:
     case Array:
@@ -73,9 +73,9 @@ const { is: Gt, defineProperty: qt, getOwnPropertyDescriptor: Wt, getOwnProperty
       }
   }
   return s;
-} }, dt = (i, t) => !Gt(i, t), $t = { attribute: !0, type: String, converter: Y, reflect: !1, useDefault: !1, hasChanged: dt };
+} }, dt = (i, t) => !qt(i, t), $t = { attribute: !0, type: String, converter: Y, reflect: !1, useDefault: !1, hasChanged: dt };
 Symbol.metadata ??= Symbol("metadata"), et.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
-let N = class extends HTMLElement {
+let D = class extends HTMLElement {
   static addInitializer(t) {
     this._$Ei(), (this.l ??= []).push(t);
   }
@@ -85,7 +85,7 @@ let N = class extends HTMLElement {
   static createProperty(t, s = $t) {
     if (s.state && (s.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(t) && ((s = Object.create(s)).wrapped = !0), this.elementProperties.set(t, s), !s.noAccessor) {
       const e = Symbol(), n = this.getPropertyDescriptor(t, e, s);
-      n !== void 0 && qt(this.prototype, t, n);
+      n !== void 0 && Gt(this.prototype, t, n);
     }
   }
   static getPropertyDescriptor(t, s, e) {
@@ -104,7 +104,7 @@ let N = class extends HTMLElement {
   }
   static _$Ei() {
     if (this.hasOwnProperty(B("elementProperties"))) return;
-    const t = Jt(this);
+    const t = Xt(this);
     t.finalize(), t.l !== void 0 && (this.l = [...t.l]), this.elementProperties = new Map(t.elementProperties);
   }
   static finalize() {
@@ -256,28 +256,28 @@ let N = class extends HTMLElement {
   firstUpdated(t) {
   }
 };
-N.elementStyles = [], N.shadowRootOptions = { mode: "open" }, N[B("elementProperties")] = /* @__PURE__ */ new Map(), N[B("finalized")] = /* @__PURE__ */ new Map(), Zt?.({ ReactiveElement: N }), (et.reactiveElementVersions ??= []).push("2.1.2");
+D.elementStyles = [], D.shadowRootOptions = { mode: "open" }, D[B("elementProperties")] = /* @__PURE__ */ new Map(), D[B("finalized")] = /* @__PURE__ */ new Map(), Zt?.({ ReactiveElement: D }), (et.reactiveElementVersions ??= []).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const ht = globalThis, vt = (i) => i, Q = ht.trustedTypes, yt = Q ? Q.createPolicy("lit-html", { createHTML: (i) => i }) : void 0, Nt = "$lit$", v = `lit$${Math.random().toFixed(9).slice(2)}$`, Dt = "?" + v, Yt = `<${Dt}>`, P = document, G = () => P.createComment(""), q = (i) => i === null || typeof i != "object" && typeof i != "function", pt = Array.isArray, Qt = (i) => pt(i) || typeof i?.[Symbol.iterator] == "function", it = `[ 	
-\f\r]`, z = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, xt = /-->/g, wt = />/g, x = RegExp(`>|${it}(?:([^\\s"'>=/]+)(${it}*=${it}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), At = /'/g, St = /"/g, kt = /^(?:script|style|textarea|title)$/i, te = (i) => (t, ...s) => ({ _$litType$: i, strings: t, values: s }), S = te(1), O = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), Mt = /* @__PURE__ */ new WeakMap(), M = P.createTreeWalker(P, 129);
+const ht = globalThis, vt = (i) => i, Q = ht.trustedTypes, yt = Q ? Q.createPolicy("lit-html", { createHTML: (i) => i }) : void 0, Nt = "$lit$", y = `lit$${Math.random().toFixed(9).slice(2)}$`, Dt = "?" + y, Yt = `<${Dt}>`, E = document, q = () => E.createComment(""), G = (i) => i === null || typeof i != "object" && typeof i != "function", pt = Array.isArray, Qt = (i) => pt(i) || typeof i?.[Symbol.iterator] == "function", it = `[ 	
+\f\r]`, F = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, xt = /-->/g, wt = />/g, w = RegExp(`>|${it}(?:([^\\s"'>=/]+)(${it}*=${it}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`, "g"), At = /'/g, St = /"/g, kt = /^(?:script|style|textarea|title)$/i, te = (i) => (t, ...s) => ({ _$litType$: i, strings: t, values: s }), M = te(1), U = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), Mt = /* @__PURE__ */ new WeakMap(), C = E.createTreeWalker(E, 129);
 function Ot(i, t) {
   if (!pt(i) || !i.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return yt !== void 0 ? yt.createHTML(t) : t;
 }
 const ee = (i, t) => {
   const s = i.length - 1, e = [];
-  let n, o = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", r = z;
+  let n, o = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", r = F;
   for (let l = 0; l < s; l++) {
     const a = i[l];
     let c, d, h = -1, g = 0;
-    for (; g < a.length && (r.lastIndex = g, d = r.exec(a), d !== null); ) g = r.lastIndex, r === z ? d[1] === "!--" ? r = xt : d[1] !== void 0 ? r = wt : d[2] !== void 0 ? (kt.test(d[2]) && (n = RegExp("</" + d[2], "g")), r = x) : d[3] !== void 0 && (r = x) : r === x ? d[0] === ">" ? (r = n ?? z, h = -1) : d[1] === void 0 ? h = -2 : (h = r.lastIndex - d[2].length, c = d[1], r = d[3] === void 0 ? x : d[3] === '"' ? St : At) : r === St || r === At ? r = x : r === xt || r === wt ? r = z : (r = x, n = void 0);
-    const p = r === x && i[l + 1].startsWith("/>") ? " " : "";
-    o += r === z ? a + Yt : h >= 0 ? (e.push(c), a.slice(0, h) + Nt + a.slice(h) + v + p) : a + v + (h === -2 ? l : p);
+    for (; g < a.length && (r.lastIndex = g, d = r.exec(a), d !== null); ) g = r.lastIndex, r === F ? d[1] === "!--" ? r = xt : d[1] !== void 0 ? r = wt : d[2] !== void 0 ? (kt.test(d[2]) && (n = RegExp("</" + d[2], "g")), r = w) : d[3] !== void 0 && (r = w) : r === w ? d[0] === ">" ? (r = n ?? F, h = -1) : d[1] === void 0 ? h = -2 : (h = r.lastIndex - d[2].length, c = d[1], r = d[3] === void 0 ? w : d[3] === '"' ? St : At) : r === St || r === At ? r = w : r === xt || r === wt ? r = F : (r = w, n = void 0);
+    const p = r === w && i[l + 1].startsWith("/>") ? " " : "";
+    o += r === F ? a + Yt : h >= 0 ? (e.push(c), a.slice(0, h) + Nt + a.slice(h) + y + p) : a + y + (h === -2 ? l : p);
   }
   return [Ot(i, o + (i[s] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), e];
 };
@@ -287,42 +287,42 @@ class W {
     this.parts = [];
     let o = 0, r = 0;
     const l = t.length - 1, a = this.parts, [c, d] = ee(t, s);
-    if (this.el = W.createElement(c, e), M.currentNode = this.el.content, s === 2 || s === 3) {
+    if (this.el = W.createElement(c, e), C.currentNode = this.el.content, s === 2 || s === 3) {
       const h = this.el.content.firstChild;
       h.replaceWith(...h.childNodes);
     }
-    for (; (n = M.nextNode()) !== null && a.length < l; ) {
+    for (; (n = C.nextNode()) !== null && a.length < l; ) {
       if (n.nodeType === 1) {
         if (n.hasAttributes()) for (const h of n.getAttributeNames()) if (h.endsWith(Nt)) {
-          const g = d[r++], p = n.getAttribute(h).split(v), f = /([.?@])?(.*)/.exec(g);
+          const g = d[r++], p = n.getAttribute(h).split(y), f = /([.?@])?(.*)/.exec(g);
           a.push({ type: 1, index: o, name: f[2], strings: p, ctor: f[1] === "." ? ie : f[1] === "?" ? ne : f[1] === "@" ? re : st }), n.removeAttribute(h);
-        } else h.startsWith(v) && (a.push({ type: 6, index: o }), n.removeAttribute(h));
+        } else h.startsWith(y) && (a.push({ type: 6, index: o }), n.removeAttribute(h));
         if (kt.test(n.tagName)) {
-          const h = n.textContent.split(v), g = h.length - 1;
+          const h = n.textContent.split(y), g = h.length - 1;
           if (g > 0) {
             n.textContent = Q ? Q.emptyScript : "";
-            for (let p = 0; p < g; p++) n.append(h[p], G()), M.nextNode(), a.push({ type: 2, index: ++o });
-            n.append(h[g], G());
+            for (let p = 0; p < g; p++) n.append(h[p], q()), C.nextNode(), a.push({ type: 2, index: ++o });
+            n.append(h[g], q());
           }
         }
       } else if (n.nodeType === 8) if (n.data === Dt) a.push({ type: 2, index: o });
       else {
         let h = -1;
-        for (; (h = n.data.indexOf(v, h + 1)) !== -1; ) a.push({ type: 7, index: o }), h += v.length - 1;
+        for (; (h = n.data.indexOf(y, h + 1)) !== -1; ) a.push({ type: 7, index: o }), h += y.length - 1;
       }
       o++;
     }
   }
   static createElement(t, s) {
-    const e = P.createElement("template");
+    const e = E.createElement("template");
     return e.innerHTML = t, e;
   }
 }
-function U(i, t, s = i, e) {
-  if (t === O) return t;
+function H(i, t, s = i, e) {
+  if (t === U) return t;
   let n = e !== void 0 ? s._$Co?.[e] : s._$Cl;
-  const o = q(t) ? void 0 : t._$litDirective$;
-  return n?.constructor !== o && (n?._$AO?.(!1), o === void 0 ? n = void 0 : (n = new o(i), n._$AT(i, s, e)), e !== void 0 ? (s._$Co ??= [])[e] = n : s._$Cl = n), n !== void 0 && (t = U(i, n._$AS(i, t.values), n, e)), t;
+  const o = G(t) ? void 0 : t._$litDirective$;
+  return n?.constructor !== o && (n?._$AO?.(!1), o === void 0 ? n = void 0 : (n = new o(i), n._$AT(i, s, e)), e !== void 0 ? (s._$Co ??= [])[e] = n : s._$Cl = n), n !== void 0 && (t = H(i, n._$AS(i, t.values), n, e)), t;
 }
 class se {
   constructor(t, s) {
@@ -335,17 +335,17 @@ class se {
     return this._$AM._$AU;
   }
   u(t) {
-    const { el: { content: s }, parts: e } = this._$AD, n = (t?.creationScope ?? P).importNode(s, !0);
-    M.currentNode = n;
-    let o = M.nextNode(), r = 0, l = 0, a = e[0];
+    const { el: { content: s }, parts: e } = this._$AD, n = (t?.creationScope ?? E).importNode(s, !0);
+    C.currentNode = n;
+    let o = C.nextNode(), r = 0, l = 0, a = e[0];
     for (; a !== void 0; ) {
       if (r === a.index) {
         let c;
         a.type === 2 ? c = new K(o, o.nextSibling, this, t) : a.type === 1 ? c = new a.ctor(o, a.name, a.strings, this, t) : a.type === 6 && (c = new oe(o, this, t)), this._$AV.push(c), a = e[++l];
       }
-      r !== a?.index && (o = M.nextNode(), r++);
+      r !== a?.index && (o = C.nextNode(), r++);
     }
-    return M.currentNode = P, n;
+    return C.currentNode = E, n;
   }
   p(t) {
     let s = 0;
@@ -371,7 +371,7 @@ class K {
     return this._$AB;
   }
   _$AI(t, s = this) {
-    t = U(this, t, s), q(t) ? t === u || t == null || t === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : t !== this._$AH && t !== O && this._(t) : t._$litType$ !== void 0 ? this.$(t) : t.nodeType !== void 0 ? this.T(t) : Qt(t) ? this.k(t) : this._(t);
+    t = H(this, t, s), G(t) ? t === u || t == null || t === "" ? (this._$AH !== u && this._$AR(), this._$AH = u) : t !== this._$AH && t !== U && this._(t) : t._$litType$ !== void 0 ? this.$(t) : t.nodeType !== void 0 ? this.T(t) : Qt(t) ? this.k(t) : this._(t);
   }
   O(t) {
     return this._$AA.parentNode.insertBefore(t, this._$AB);
@@ -380,7 +380,7 @@ class K {
     this._$AH !== t && (this._$AR(), this._$AH = this.O(t));
   }
   _(t) {
-    this._$AH !== u && q(this._$AH) ? this._$AA.nextSibling.data = t : this.T(P.createTextNode(t)), this._$AH = t;
+    this._$AH !== u && G(this._$AH) ? this._$AA.nextSibling.data = t : this.T(E.createTextNode(t)), this._$AH = t;
   }
   $(t) {
     const { values: s, _$litType$: e } = t, n = typeof e == "number" ? this._$AC(t) : (e.el === void 0 && (e.el = W.createElement(Ot(e.h, e.h[0]), this.options)), e);
@@ -398,7 +398,7 @@ class K {
     pt(this._$AH) || (this._$AH = [], this._$AR());
     const s = this._$AH;
     let e, n = 0;
-    for (const o of t) n === s.length ? s.push(e = new K(this.O(G()), this.O(G()), this, this.options)) : e = s[n], e._$AI(o), n++;
+    for (const o of t) n === s.length ? s.push(e = new K(this.O(q()), this.O(q()), this, this.options)) : e = s[n], e._$AI(o), n++;
     n < s.length && (this._$AR(e && e._$AB.nextSibling, n), s.length = n);
   }
   _$AR(t = this._$AA.nextSibling, s) {
@@ -424,11 +424,11 @@ class st {
   _$AI(t, s = this, e, n) {
     const o = this.strings;
     let r = !1;
-    if (o === void 0) t = U(this, t, s, 0), r = !q(t) || t !== this._$AH && t !== O, r && (this._$AH = t);
+    if (o === void 0) t = H(this, t, s, 0), r = !G(t) || t !== this._$AH && t !== U, r && (this._$AH = t);
     else {
       const l = t;
       let a, c;
-      for (t = o[0], a = 0; a < o.length - 1; a++) c = U(this, l[e + a], s, a), c === O && (c = this._$AH[a]), r ||= !q(c) || c !== this._$AH[a], c === u ? t = u : t !== u && (t += (c ?? "") + o[a + 1]), this._$AH[a] = c;
+      for (t = o[0], a = 0; a < o.length - 1; a++) c = H(this, l[e + a], s, a), c === U && (c = this._$AH[a]), r ||= !G(c) || c !== this._$AH[a], c === u ? t = u : t !== u && (t += (c ?? "") + o[a + 1]), this._$AH[a] = c;
     }
     r && !n && this.j(t);
   }
@@ -457,7 +457,7 @@ class re extends st {
     super(t, s, e, n, o), this.type = 5;
   }
   _$AI(t, s = this) {
-    if ((t = U(this, t, s, 0) ?? u) === O) return;
+    if ((t = H(this, t, s, 0) ?? u) === U) return;
     const e = this._$AH, n = t === u && e !== u || t.capture !== e.capture || t.once !== e.once || t.passive !== e.passive, o = t !== u && (e === u || n);
     n && this.element.removeEventListener(this.name, this, e), o && this.element.addEventListener(this.name, this, t), this._$AH = t;
   }
@@ -473,7 +473,7 @@ class oe {
     return this._$AM._$AU;
   }
   _$AI(t) {
-    U(this, t);
+    H(this, t);
   }
 }
 const ae = ht.litHtmlPolyfillSupport;
@@ -483,7 +483,7 @@ const le = (i, t, s) => {
   let n = e._$litPart$;
   if (n === void 0) {
     const o = s?.renderBefore ?? null;
-    e._$litPart$ = n = new K(t.insertBefore(G(), o), o, void 0, s ?? {});
+    e._$litPart$ = n = new K(t.insertBefore(q(), o), o, void 0, s ?? {});
   }
   return n._$AI(i), n;
 };
@@ -493,7 +493,7 @@ const le = (i, t, s) => {
  * SPDX-License-Identifier: BSD-3-Clause
  */
 const ut = globalThis;
-class k extends N {
+class O extends D {
   constructor() {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
@@ -512,12 +512,12 @@ class k extends N {
     super.disconnectedCallback(), this._$Do?.setConnected(!1);
   }
   render() {
-    return O;
+    return U;
   }
 }
-k._$litElement$ = !0, k.finalized = !0, ut.litElementHydrateSupport?.({ LitElement: k });
+O._$litElement$ = !0, O.finalized = !0, ut.litElementHydrateSupport?.({ LitElement: O });
 const ce = ut.litElementPolyfillSupport;
-ce?.({ LitElement: k });
+ce?.({ LitElement: O });
 (ut.litElementVersions ??= []).push("4.2.2");
 /**
  * @license
@@ -566,16 +566,16 @@ function gt(i) {
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-function H(i) {
+function I(i) {
   return gt({ ...i, state: !0, attribute: !1 });
 }
-const pe = 3440.065, Ht = 0.539957, It = 0.868976, C = (i) => i * Math.PI / 180, ue = (i) => i * 180 / Math.PI;
+const pe = 3440.065, Ht = 0.539957, It = 0.868976, P = (i) => i * Math.PI / 180, ue = (i) => i * 180 / Math.PI;
 function ge(i, t, s, e) {
-  const n = C(s - i), o = C(e - t), r = Math.sin(n / 2) * Math.sin(n / 2) + Math.cos(C(i)) * Math.cos(C(s)) * Math.sin(o / 2) * Math.sin(o / 2);
+  const n = P(s - i), o = P(e - t), r = Math.sin(n / 2) * Math.sin(n / 2) + Math.cos(P(i)) * Math.cos(P(s)) * Math.sin(o / 2) * Math.sin(o / 2);
   return 2 * pe * Math.asin(Math.min(1, Math.sqrt(r)));
 }
 function fe(i, t, s, e) {
-  const n = C(i), o = C(s), r = C(e - t), l = Math.sin(r) * Math.cos(o), a = Math.cos(n) * Math.sin(o) - Math.sin(n) * Math.cos(o) * Math.cos(r);
+  const n = P(i), o = P(s), r = P(e - t), l = Math.sin(r) * Math.cos(o), a = Math.cos(n) * Math.sin(o) - Math.sin(n) * Math.cos(o) * Math.cos(r);
   return (ue(Math.atan2(l, a)) + 360) % 360;
 }
 function me(i) {
@@ -593,14 +593,14 @@ function $e(i) {
 function ot(i, t) {
   return t === "km" ? _e(i) : t === "mi" ? $e(i) : i;
 }
-function D(i, t) {
+function k(i, t) {
   return t === "km" ? me(i) : t === "mi" ? be(i) : i;
 }
 function at(i, t) {
-  const s = D(i, t), e = t === "km" ? "km" : t === "mi" ? "mi" : "nm";
+  const s = k(i, t), e = t === "km" ? "km" : t === "mi" ? "mi" : "nm";
   return s < 10 ? `${s.toFixed(1)} ${e}` : `${Math.round(s)} ${e}`;
 }
-const b = "#2bffa0", X = "#8affce", Ct = "rgba(43, 255, 160, 0.28)", Pt = "rgba(43, 255, 160, 0.12)", nt = 78, w = Math.PI * 2, A = Math.PI / 180, Et = 240;
+const b = "#2bffa0", J = "#8affce", Ct = "rgba(43, 255, 160, 0.28)", Pt = "rgba(43, 255, 160, 0.12)", nt = 78, A = Math.PI * 2, S = Math.PI / 180, Et = 240;
 function ve(i, t) {
   return Math.abs(i.distanceNm - t.distanceNm) <= 5e-3 && Math.abs(i.bearingDeg - t.bearingDeg) <= 0.05;
 }
@@ -694,7 +694,7 @@ class ye {
     return l;
   }
   projectPolar(t, s, e, n, o) {
-    const r = t / this.options.rangeNm * o, l = (s - 90) * A;
+    const r = t / this.options.rangeNm * o, l = (s - 90) * S;
     return { x: e + r * Math.cos(l), y: n + r * Math.sin(l) };
   }
   /**
@@ -749,21 +749,21 @@ class ye {
   }
   drawBackground(t, s, e) {
     const { ctx: n } = this, o = n.createRadialGradient(t, s, 0, t, s, e);
-    o.addColorStop(0, "#04281a"), o.addColorStop(0.75, "#02180f"), o.addColorStop(1, "#010f09"), n.fillStyle = o, n.beginPath(), n.arc(t, s, e, 0, w), n.fill();
+    o.addColorStop(0, "#04281a"), o.addColorStop(0.75, "#02180f"), o.addColorStop(1, "#010f09"), n.fillStyle = o, n.beginPath(), n.arc(t, s, e, 0, A), n.fill();
   }
   drawGrid(t, s, e) {
     const { ctx: n, options: o } = this;
     n.save(), n.strokeStyle = Pt, n.lineWidth = 1;
     for (let a = 0; a < 360; a += 30) {
-      const c = (a - 90) * A;
+      const c = (a - 90) * S;
       n.beginPath(), n.moveTo(t, s), n.lineTo(t + e * Math.cos(c), s + e * Math.sin(c)), n.stroke();
     }
     n.strokeStyle = Ct, n.beginPath(), n.moveTo(t - e, s), n.lineTo(t + e, s), n.moveTo(t, s - e), n.lineTo(t, s + e), n.stroke();
     const r = Math.max(1, Math.round(o.rings));
     for (let a = 1; a <= r; a++)
-      n.strokeStyle = a === r ? Ct : Pt, n.lineWidth = a === r ? 2 : 1, n.beginPath(), n.arc(t, s, e * a / r, 0, w), n.stroke();
+      n.strokeStyle = a === r ? Ct : Pt, n.lineWidth = a === r ? 2 : 1, n.beginPath(), n.arc(t, s, e * a / r, 0, A), n.stroke();
     n.fillStyle = "rgba(43, 255, 160, 0.55)", n.font = "10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", n.textAlign = "left";
-    const l = -45 * A;
+    const l = -45 * S;
     for (let a = 1; a <= r; a++) {
       const c = e * a / r, d = t + c * Math.cos(l) + 4, h = s + c * Math.sin(l) - 2;
       n.fillText(at(o.rangeNm * a / r, o.distanceUnit), d, h);
@@ -772,21 +772,21 @@ class ye {
   }
   drawRim(t, s, e) {
     const { ctx: n } = this;
-    n.save(), n.strokeStyle = b, n.lineWidth = 2, n.shadowColor = b, n.shadowBlur = 12, n.beginPath(), n.arc(t, s, e, 0, w), n.stroke(), n.restore(), n.save(), n.strokeStyle = b, n.fillStyle = b, n.font = "10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", n.textAlign = "center", n.textBaseline = "middle";
+    n.save(), n.strokeStyle = b, n.lineWidth = 2, n.shadowColor = b, n.shadowBlur = 12, n.beginPath(), n.arc(t, s, e, 0, A), n.stroke(), n.restore(), n.save(), n.strokeStyle = b, n.fillStyle = b, n.font = "10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", n.textAlign = "center", n.textBaseline = "middle";
     for (let o = 0; o < 360; o += 5) {
-      const r = o % 30 === 0, l = o % 90 === 0, a = (o - 90) * A, c = e + (r ? 12 : 6), d = e + (r ? 22 : 11);
+      const r = o % 30 === 0, l = o % 90 === 0, a = (o - 90) * S, c = e + (r ? 12 : 6), d = e + (r ? 22 : 11);
       if (n.lineWidth = r ? 2 : 1, n.beginPath(), n.moveTo(t + c * Math.cos(a), s + c * Math.sin(a)), n.lineTo(t + d * Math.cos(a), s + d * Math.sin(a)), n.stroke(), r) {
         const h = e + 22, g = t + h * Math.cos(a), p = s + h * Math.sin(a);
-        l ? (n.font = "bold 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", n.fillStyle = X, n.fillText(["N", "E", "S", "W"][o / 90], g, p), n.font = "9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace") : (n.fillStyle = "rgba(43, 255, 160, 0.75)", n.fillText(String(o).padStart(3, "0"), g, p));
+        l ? (n.font = "bold 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", n.fillStyle = J, n.fillText(["N", "E", "S", "W"][o / 90], g, p), n.font = "9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace") : (n.fillStyle = "rgba(43, 255, 160, 0.75)", n.fillText(String(o).padStart(3, "0"), g, p));
       }
     }
     n.restore();
   }
   drawSweep(t, s, e, n, o) {
-    const { ctx: r } = this, l = (n - 90) * A, a = (n - nt - 90) * A, c = nt / 360, d = r.createConicGradient(a, t, s);
+    const { ctx: r } = this, l = (n - 90) * S, a = (n - nt - 90) * S, c = nt / 360, d = r.createConicGradient(a, t, s);
     d.addColorStop(0, "rgba(43, 255, 160, 0)"), d.addColorStop(c * 0.55, "rgba(43, 255, 160, 0.10)"), d.addColorStop(c * 0.85, "rgba(43, 255, 160, 0.22)"), d.addColorStop(c, "rgba(120, 255, 200, 0.55)"), d.addColorStop(Math.min(1, c + 2e-3), "rgba(43, 255, 160, 0)"), d.addColorStop(1, "rgba(43, 255, 160, 0)"), r.save(), r.beginPath(), r.moveTo(t, s), r.arc(t, s, e, a, l), r.closePath(), r.fillStyle = d, r.fill();
     const h = (o / 1e3 / this.options.sweepDurationSec % 1 + 1) % 1;
-    r.strokeStyle = `rgba(43, 255, 160, ${(0.16 * (1 - h)).toFixed(3)})`, r.lineWidth = 2, r.beginPath(), r.arc(t, s, h * e, 0, w), r.stroke(), r.strokeStyle = X, r.shadowColor = b, r.shadowBlur = 14, r.lineWidth = 2.5, r.beginPath(), r.moveTo(t, s), r.lineTo(t + e * Math.cos(l), s + e * Math.sin(l)), r.stroke(), r.restore();
+    r.strokeStyle = `rgba(43, 255, 160, ${(0.16 * (1 - h)).toFixed(3)})`, r.lineWidth = 2, r.beginPath(), r.arc(t, s, h * e, 0, A), r.stroke(), r.strokeStyle = J, r.shadowColor = b, r.shadowBlur = 14, r.lineWidth = 2.5, r.beginPath(), r.moveTo(t, s), r.lineTo(t + e * Math.cos(l), s + e * Math.sin(l)), r.stroke(), r.restore();
   }
   /**
    * Historical track: a fading phosphor line through the last
@@ -796,18 +796,18 @@ class ye {
     const { ctx: o, options: r } = this, l = r.trailSeconds;
     if (l <= 0 || this.trails.size === 0) return;
     const a = l * 1e3;
-    o.save(), o.beginPath(), o.arc(t, s, e, 0, w), o.clip(), o.lineCap = "round", o.lineJoin = "round", o.strokeStyle = b;
+    o.save(), o.beginPath(), o.arc(t, s, e, 0, A), o.clip(), o.lineCap = "round", o.lineJoin = "round", o.strokeStyle = b;
     for (const [c, d] of this.trails) {
       if (d.length < 2) continue;
       const h = r.selectedId === c, g = h ? 0.62 : 0.34;
       o.lineWidth = h ? 1.8 : 1.2;
       for (let p = 1; p < d.length; p++) {
-        const f = d[p - 1], I = d[p], V = n - I.t;
+        const f = d[p - 1], z = d[p], V = n - z.t;
         if (V > a) continue;
-        const R = Math.max(0, 1 - V / a);
-        if (R <= 0) continue;
-        const L = this.projectPolar(f.distanceNm, f.bearingDeg, t, s, e), y = this.projectPolar(I.distanceNm, I.bearingDeg, t, s, e);
-        o.globalAlpha = g * R, o.beginPath(), o.moveTo(L.x, L.y), o.lineTo(y.x, y.y), o.stroke();
+        const T = Math.max(0, 1 - V / a);
+        if (T <= 0) continue;
+        const L = this.projectPolar(f.distanceNm, f.bearingDeg, t, s, e), x = this.projectPolar(z.distanceNm, z.bearingDeg, t, s, e);
+        o.globalAlpha = g * T, o.beginPath(), o.moveTo(L.x, L.y), o.lineTo(x.x, x.y), o.stroke();
       }
     }
     o.restore();
@@ -820,21 +820,21 @@ class ye {
       if (!d || !d.visible) continue;
       const { distanceNm: h, bearingDeg: g } = d.display;
       if (h > l.rangeNm) continue;
-      const { x: p, y: f } = this.projectPolar(h, g, t, s, e), I = (n - g + 360) % 360, V = Math.max(0, 1 - I / nt), R = Math.pow(V, 1.7), L = 0.2 + 0.8 * R, y = l.selectedId === c.id;
+      const { x: p, y: f } = this.projectPolar(h, g, t, s, e), z = (n - g + 360) % 360, V = Math.max(0, 1 - z / nt), T = Math.pow(V, 1.7), L = 0.2 + 0.8 * T, x = l.selectedId === c.id;
       if (c.onGround) {
-        r.strokeStyle = `rgba(255, 210, 110, ${(0.35 + 0.5 * R).toFixed(3)})`, r.lineWidth = 1.5;
+        r.strokeStyle = `rgba(255, 210, 110, ${(0.35 + 0.5 * T).toFixed(3)})`, r.lineWidth = 1.5;
         const _ = a * 0.75;
         r.strokeRect(p - _ / 2, f - _ / 2, _, _);
       } else {
         const _ = r.createRadialGradient(p, f, 0, p, f, a * 2.6);
-        if (_.addColorStop(0, `rgba(120, 255, 200, ${(0.75 * L).toFixed(3)})`), _.addColorStop(1, "rgba(43, 255, 160, 0)"), r.fillStyle = _, r.beginPath(), r.arc(p, f, a * 2.6, 0, w), r.fill(), r.save(), r.translate(p, f), r.rotate((d.headingDeg ?? g) * A), r.fillStyle = `rgba(140, 255, 205, ${L.toFixed(3)})`, r.shadowColor = b, r.shadowBlur = y ? 16 : 6 + 10 * R, this.tracePlane(a), r.fill(), r.restore(), y) {
-          const J = a + 7 + Math.sin(o / 300) * 1.5;
-          r.strokeStyle = X, r.lineWidth = 1.6, r.setLineDash([5, 4]), r.lineDashOffset = -o / 40, r.beginPath(), r.arc(p, f, J, 0, w), r.stroke(), r.setLineDash([]);
+        if (_.addColorStop(0, `rgba(120, 255, 200, ${(0.75 * L).toFixed(3)})`), _.addColorStop(1, "rgba(43, 255, 160, 0)"), r.fillStyle = _, r.beginPath(), r.arc(p, f, a * 2.6, 0, A), r.fill(), r.save(), r.translate(p, f), r.rotate((d.headingDeg ?? g) * S), r.fillStyle = `rgba(140, 255, 205, ${L.toFixed(3)})`, r.shadowColor = b, r.shadowBlur = x ? 16 : 6 + 10 * T, this.tracePlane(a), r.fill(), r.restore(), x) {
+          const X = a + 7 + Math.sin(o / 300) * 1.5;
+          r.strokeStyle = J, r.lineWidth = 1.6, r.setLineDash([5, 4]), r.lineDashOffset = -o / 40, r.beginPath(), r.arc(p, f, X, 0, A), r.stroke(), r.setLineDash([]);
         }
       }
       if (l.showLabels) {
-        const _ = p >= t, J = a + 4;
-        r.font = "10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", r.textAlign = _ ? "right" : "left", r.fillStyle = y ? "#d7ffeb" : "rgba(160, 255, 210, 0.88)", r.shadowColor = b, r.shadowBlur = y ? 8 : 4, r.fillText(c.callsign, p + (_ ? -J : J), f), r.shadowBlur = 0;
+        const _ = p >= t, X = a + 4;
+        r.font = "10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", r.textAlign = _ ? "right" : "left", r.fillStyle = x ? "#d7ffeb" : "rgba(160, 255, 210, 0.88)", r.shadowColor = b, r.shadowBlur = x ? 8 : 4, r.fillText(c.callsign, p + (_ ? -X : X), f), r.shadowBlur = 0;
       }
     }
     r.restore();
@@ -846,7 +846,7 @@ class ye {
   }
   drawOwnship(t, s) {
     const { ctx: e } = this;
-    e.save(), e.translate(t, s), e.strokeStyle = X, e.lineWidth = 1.6, e.shadowColor = b, e.shadowBlur = 8, this.tracePlane(7), e.stroke(), e.restore();
+    e.save(), e.translate(t, s), e.strokeStyle = J, e.lineWidth = 1.6, e.shadowColor = b, e.shadowBlur = 8, this.tracePlane(7), e.stroke(), e.restore();
   }
 }
 const xe = jt`
@@ -899,15 +899,21 @@ const xe = jt`
 
   .radar-wrap {
     position: relative;
-    aspect-ratio: 1 / 1;
     width: 100%;
+    /* Fixed scope height keeps the card compact on wide dashboards. Without
+       --radar-h the scope falls back to a square sized from the card width. */
+    height: var(--radar-h, auto);
+    aspect-ratio: 1 / 1;
     background: radial-gradient(circle at center, #04281a 0%, #02180f 75%, #010f09 100%);
   }
 
   canvas {
     position: absolute;
-    inset: 0;
-    width: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    /* Stay square and centred inside a wider card instead of stretching. */
+    width: min(100%, var(--radar-h, 100%));
     height: 100%;
     display: block;
     cursor: crosshair;
@@ -995,9 +1001,10 @@ const xe = jt`
   /* Flight details panel */
   .details {
     position: absolute;
-    left: 10px;
-    right: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 10px;
+    width: min(calc(100% - 20px), calc(var(--radar-h, 100%) - 20px));
     z-index: 6;
     background: rgba(2, 24, 15, 0.92);
     border: 1px solid rgba(43, 255, 160, 0.45);
@@ -1078,14 +1085,14 @@ const xe = jt`
       white-space: normal;
     }
   }
-`, Lt = 250, zt = 5, we = {
+`, zt = 250, Lt = 5, we = {
   "adsb.lol": { name: "adsb.lol", url: "https://adsb.lol" },
   "adsb.fi": { name: "adsb.fi", url: "https://adsb.fi" }
 };
 function m(i) {
   return typeof i == "number" && Number.isFinite(i) ? i : typeof i == "string" && i.trim() !== "" && Number.isFinite(Number(i)) ? Number(i) : null;
 }
-function F(i) {
+function j(i) {
   if (typeof i != "string") return null;
   const t = i.trim();
   return t === "" ? null : t;
@@ -1093,11 +1100,11 @@ function F(i) {
 function Ae(i, t, s) {
   const e = m(i?.lat), n = m(i?.lon);
   if (e === null || n === null) return null;
-  const o = F(i?.hex) ?? `${e.toFixed(3)}:${n.toFixed(3)}`, r = F(i?.flight), l = i?.alt_baro, a = typeof l == "string" && l.toLowerCase() === "ground", c = a ? null : m(l) ?? m(i?.alt_geom), d = m(i?.track) ?? m(i?.true_heading) ?? m(i?.nav_heading) ?? m(i?.mag_heading);
+  const o = j(i?.hex) ?? `${e.toFixed(3)}:${n.toFixed(3)}`, r = j(i?.flight), l = i?.alt_baro, a = typeof l == "string" && l.toLowerCase() === "ground", c = a ? null : m(l) ?? m(i?.alt_geom), d = m(i?.track) ?? m(i?.true_heading) ?? m(i?.nav_heading) ?? m(i?.mag_heading);
   return {
     id: o,
     callsign: r ?? o.toUpperCase(),
-    typeCode: F(i?.t) ?? F(i?.category),
+    typeCode: j(i?.t) ?? j(i?.category),
     altitudeFt: c !== null ? Math.round(c) : null,
     onGround: a,
     speedKt: m(i?.gs) ?? m(i?.tas) ?? m(i?.ias),
@@ -1105,7 +1112,7 @@ function Ae(i, t, s) {
     lat: e,
     lon: n,
     verticalRateFpm: m(i?.baro_rate) ?? m(i?.vert_rate),
-    squawk: F(i?.squawk),
+    squawk: j(i?.squawk),
     rssi: m(i?.rssi),
     distanceNm: ge(t, s, e, n),
     bearingDeg: fe(t, s, e, n)
@@ -1117,7 +1124,7 @@ function Se(i) {
   return Array.isArray(i?.ac) ? i.ac : [];
 }
 async function Me(i, t, s, e, n, o) {
-  const r = Math.min(Lt, Math.max(zt, Math.ceil(n))), l = `lat=${s}&lon=${e}&radius=${r}&provider=${encodeURIComponent(t)}`;
+  const r = Math.min(zt, Math.max(Lt, Math.ceil(n))), l = `lat=${s}&lon=${e}&radius=${r}&provider=${encodeURIComponent(t)}`;
   let a;
   if (o) {
     const c = o.includes("?") ? "&" : "?", d = await fetch(`${o}${c}${l}`, {
@@ -1164,6 +1171,7 @@ const ke = {
   update_interval: "Update interval (seconds)",
   sweep_duration: "Sweep duration (seconds / revolution)",
   trail_seconds: "Historical track (seconds)",
+  height: "Radar height (px, 0 = fit card width)",
   show_labels: "Show callsign labels"
 }, Oe = {
   nm: { min: 5, max: 250, step: 5 },
@@ -1173,7 +1181,7 @@ const ke = {
 function rt(i) {
   return Math.round(i * 10) / 10;
 }
-let tt = class extends k {
+let tt = class extends O {
   constructor() {
     super(...arguments), this._computeLabel = (i) => ke[i.name] ?? i.name;
   }
@@ -1187,10 +1195,10 @@ let tt = class extends k {
   _valueChanged(i) {
     const s = { ...i.detail.value }, e = this._currentUnit(), n = s.distance_unit === "km" || s.distance_unit === "mi" ? s.distance_unit : "nm";
     if (n !== e) {
-      const o = typeof s.range == "number" ? s.range : typeof s.range_nm == "number" ? D(s.range_nm, e) : Rt;
-      s.range = rt(D(ot(o, e), n));
+      const o = typeof s.range == "number" ? s.range : typeof s.range_nm == "number" ? k(s.range_nm, e) : Rt;
+      s.range = rt(k(ot(o, e), n));
     }
-    s.distance_unit = n, typeof s.range != "number" && typeof s.range_nm == "number" && (s.range = rt(D(s.range_nm, n))), delete s.range_nm, this._config = s, this.dispatchEvent(
+    s.distance_unit = n, typeof s.range != "number" && typeof s.range_nm == "number" && (s.range = rt(k(s.range_nm, n))), delete s.range_nm, this._config = s, this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: s }, bubbles: !0, composed: !0 })
     );
   }
@@ -1249,17 +1257,19 @@ let tt = class extends k {
       { name: "update_interval", selector: { number: { min: 5, max: 300, step: 5, mode: "slider" } } },
       { name: "sweep_duration", selector: { number: { min: 2, max: 20, step: 0.5, mode: "slider" } } },
       { name: "trail_seconds", selector: { number: { min: 0, max: 300, step: 10, mode: "slider" } } },
+      { name: "height", selector: { number: { min: 0, max: 800, step: 20, mode: "slider" } } },
       { name: "show_labels", selector: { boolean: {} } },
       { name: "api_url", selector: { text: { type: "url", placeholder: "https://my-proxy.example.com/aircraft" } } }
     ), e;
   }
   render() {
     if (!this._config) return u;
-    const i = this._config, t = this._currentUnit(), s = typeof i.range == "number" ? i.range : typeof i.range_nm == "number" ? rt(D(i.range_nm, t)) : Rt, e = {
+    const i = this._config, t = this._currentUnit(), s = typeof i.range == "number" ? i.range : typeof i.range_nm == "number" ? rt(k(i.range_nm, t)) : Rt, e = {
       update_interval: 10,
       sweep_duration: 6,
       rings: 4,
       trail_seconds: 60,
+      height: 360,
       provider: "adsb.lol",
       location_mode: "ha",
       show_labels: !0,
@@ -1267,7 +1277,7 @@ let tt = class extends k {
       distance_unit: t,
       range: s
     };
-    return S`
+    return M`
       <ha-form
         .hass=${this.hass}
         .data=${e}
@@ -1280,7 +1290,9 @@ let tt = class extends k {
         location from your HA configuration). Manual mode lets you point the radar at any
         coordinates. The distance unit applies to the range setting, ring labels and flight
         details. Historical tracks show the last <code>trail_seconds</code> (0 disables them)
-        and reset whenever the card is reloaded. By default aircraft data is relayed by the
+        and reset whenever the card is reloaded. <code>height</code> caps the radar scope
+        height so the card stays compact on wide dashboards — set it to 0 to size the scope
+        from the card width instead. By default aircraft data is relayed by the
         <b>Plane Radar integration</b> (required). <code>api_url</code> is an advanced override
         for a custom compatible proxy — it receives
         <code>?lat=&amp;lon=&amp;radius=&amp;provider=</code> and must return readsb-style
@@ -1293,17 +1305,17 @@ ft([
   gt({ attribute: !1 })
 ], tt.prototype, "hass", 2);
 ft([
-  H()
+  I()
 ], tt.prototype, "_config", 2);
 tt = ft([
   Ut("plane-radar-card-editor")
 ], tt);
-var Ue = Object.defineProperty, He = Object.getOwnPropertyDescriptor, E = (i, t, s, e) => {
+var Ue = Object.defineProperty, He = Object.getOwnPropertyDescriptor, R = (i, t, s, e) => {
   for (var n = e > 1 ? void 0 : e ? He(t, s) : t, o = i.length - 1, r; o >= 0; o--)
     (r = i[o]) && (n = (e ? r(t, s, n) : r(n)) || n);
   return e && n && Ue(t, s, n), n;
 };
-const Ie = "0.3.0", T = {
+const Ie = "0.4.0", v = {
   title: "AIRSPACE RADAR",
   location_mode: "ha",
   provider: "adsb.lol",
@@ -1313,16 +1325,17 @@ const Ie = "0.3.0", T = {
   sweep_duration: 6,
   distance_unit: "nm",
   trail_seconds: 60,
+  height: 360,
   show_labels: !0
 };
-let $ = class extends k {
+let $ = class extends O {
   constructor() {
     super(...arguments), this._aircraft = [], this._selected = null, this._error = null, this._lastUpdated = null, this._renderer = null, this._pollTimer = null, this._fetching = !1, this._hassNudged = !1, this._lastCenterKey = null;
   }
   setConfig(i) {
     if (!i || typeof i != "object")
       throw new Error("Invalid configuration");
-    const t = { ...T, ...i };
+    const t = { ...v, ...i };
     if (t.location_mode === "manual") {
       const { latitude: n, longitude: o } = t;
       if (typeof n != "number" || !Number.isFinite(n) || n < -90 || n > 90 || typeof o != "number" || !Number.isFinite(o) || o < -180 || o > 180)
@@ -1331,13 +1344,21 @@ let $ = class extends k {
     const s = t.distance_unit === "km" || t.distance_unit === "mi" ? t.distance_unit : "nm";
     t.distance_unit = s;
     let e;
-    typeof i.range == "number" && Number.isFinite(i.range) ? e = ot(i.range, s) : typeof i.range_nm == "number" && Number.isFinite(i.range_nm) ? e = i.range_nm : e = ot(T.range, s), t.range_nm = j(e, zt, Lt), t.range = Math.round(D(t.range_nm, s) * 10) / 10, t.rings = j(Math.round(t.rings ?? T.rings), 1, 8), t.update_interval = j(t.update_interval ?? T.update_interval, 5, 300), t.sweep_duration = j(t.sweep_duration ?? T.sweep_duration, 2, 20), t.trail_seconds = j(Math.round(t.trail_seconds ?? T.trail_seconds), 0, 300), this._config = t, this._applyRendererOptions(), this._restartPolling();
+    typeof i.range == "number" && Number.isFinite(i.range) ? e = ot(i.range, s) : typeof i.range_nm == "number" && Number.isFinite(i.range_nm) ? e = i.range_nm : e = ot(v.range, s), t.range_nm = N(e, Lt, zt), t.range = Math.round(k(t.range_nm, s) * 10) / 10, t.rings = N(Math.round(t.rings ?? v.rings), 1, 8), t.update_interval = N(t.update_interval ?? v.update_interval, 5, 300), t.sweep_duration = N(t.sweep_duration ?? v.sweep_duration, 2, 20), t.trail_seconds = N(Math.round(t.trail_seconds ?? v.trail_seconds), 0, 300), t.height = N(Math.round(t.height ?? v.height), 0, 1200), this._config = t, this._applyRendererOptions(), this._restartPolling();
   }
   getCardSize() {
-    return 7;
+    const i = this._config?.height ?? v.height;
+    return i ? Math.max(2, Math.ceil((i + 80) / 50)) : 7;
   }
   static getStubConfig() {
-    return { location_mode: "ha", range: 50, distance_unit: "nm", rings: 4, provider: "adsb.lol" };
+    return {
+      location_mode: "ha",
+      range: 50,
+      distance_unit: "nm",
+      rings: 4,
+      provider: "adsb.lol",
+      height: 360
+    };
   }
   static getConfigElement() {
     return document.createElement("plane-radar-card-editor");
@@ -1421,21 +1442,21 @@ let $ = class extends k {
   render() {
     if (!this._config) return u;
     const i = this._config, t = this._resolveLocation(), s = i.distance_unit ?? "nm", e = we[i.provider ?? "adsb.lol"], n = this._aircraft.filter((o) => o.distanceNm <= i.range_nm).length;
-    return S`
+    return M`
       <ha-card>
         <div class="header">
           <div class="title">${i.title}</div>
           <div class="contacts">${n} CONTACT${n === 1 ? "" : "S"}</div>
         </div>
-        <div class="radar-wrap">
+        <div class="radar-wrap" style=${i.height ? `--radar-h: ${i.height}px` : ""}>
           <canvas @click=${this._onCanvasClick}></canvas>
           <div class="scanlines"></div>
           <div class="vignette"></div>
-          ${t === null ? S`
+          ${t === null ? M`
                 <div class="notice">
                   <div>⚠ NO RADAR POSITION</div>
                   <div>
-                    ${i.location_mode === "manual" ? "Set a valid latitude and longitude in the card configuration." : S`Home location unavailable. Set <code>location_mode: manual</code> with
+                    ${i.location_mode === "manual" ? "Set a valid latitude and longitude in the card configuration." : M`Home location unavailable. Set <code>location_mode: manual</code> with
                           <code>latitude</code> and <code>longitude</code>, or enable the Home location zone in Home Assistant.`}
                   </div>
                 </div>` : u}
@@ -1464,12 +1485,12 @@ let $ = class extends k {
       ["Squawk", i.squawk ?? "—"],
       ["RSSI", i.rssi !== null ? `${i.rssi.toFixed(1)} dBFS` : "—"]
     ];
-    return S`
+    return M`
       <div class="details" @click=${(e) => e.stopPropagation()}>
         <div class="details-head">
           <div>
             <span class="callsign">${i.callsign}</span>
-            ${i.typeCode ? S`<span class="type">${i.typeCode}</span>` : u}
+            ${i.typeCode ? M`<span class="type">${i.typeCode}</span>` : u}
           </div>
           <button class="close" @click=${() => {
       this._selected = null, this._applyRendererOptions();
@@ -1479,7 +1500,7 @@ let $ = class extends k {
         </div>
         <div class="grid">
           ${s.map(
-      ([e, n]) => S`
+      ([e, n]) => M`
               <div class="field">
                 <label>${e}</label>
                 <span>${n}</span>
@@ -1491,28 +1512,28 @@ let $ = class extends k {
   }
 };
 $.styles = xe;
-E([
+R([
   gt({ attribute: !1 })
 ], $.prototype, "hass", 2);
-E([
-  H()
+R([
+  I()
 ], $.prototype, "_config", 2);
-E([
-  H()
+R([
+  I()
 ], $.prototype, "_aircraft", 2);
-E([
-  H()
+R([
+  I()
 ], $.prototype, "_selected", 2);
-E([
-  H()
+R([
+  I()
 ], $.prototype, "_error", 2);
-E([
-  H()
+R([
+  I()
 ], $.prototype, "_lastUpdated", 2);
-$ = E([
+$ = R([
   Ut("plane-radar-card")
 ], $);
-function j(i, t, s) {
+function N(i, t, s) {
   return Math.min(s, Math.max(t, i));
 }
 window.customCards ??= [];

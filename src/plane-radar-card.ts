@@ -21,7 +21,7 @@ import type {
   ResolvedLocation,
 } from './types';
 
-const CARD_VERSION = '0.3.0';
+const CARD_VERSION = '0.4.0';
 const DEFAULTS = {
   title: 'AIRSPACE RADAR',
   location_mode: 'ha' as const,
@@ -32,6 +32,7 @@ const DEFAULTS = {
   sweep_duration: 6,
   distance_unit: 'nm' as const,
   trail_seconds: 60,
+  height: 360,
   show_labels: true,
 };
 
@@ -89,6 +90,7 @@ export class PlaneRadarCard extends LitElement {
     merged.update_interval = clamp(merged.update_interval ?? DEFAULTS.update_interval, 5, 300);
     merged.sweep_duration = clamp(merged.sweep_duration ?? DEFAULTS.sweep_duration, 2, 20);
     merged.trail_seconds = clamp(Math.round(merged.trail_seconds ?? DEFAULTS.trail_seconds), 0, 300);
+    merged.height = clamp(Math.round(merged.height ?? DEFAULTS.height), 0, 1200);
 
     this._config = merged;
     this._applyRendererOptions();
@@ -96,11 +98,21 @@ export class PlaneRadarCard extends LitElement {
   }
 
   public getCardSize(): number {
-    return 7;
+    const height = this._config?.height ?? DEFAULTS.height;
+    if (!height) return 7;
+    // Header + footer chrome is roughly 80px; masonry units are 50px.
+    return Math.max(2, Math.ceil((height + 80) / 50));
   }
 
   public static getStubConfig() {
-    return { location_mode: 'ha', range: 50, distance_unit: 'nm', rings: 4, provider: 'adsb.lol' };
+    return {
+      location_mode: 'ha',
+      range: 50,
+      distance_unit: 'nm',
+      rings: 4,
+      provider: 'adsb.lol',
+      height: 360,
+    };
   }
 
   public static getConfigElement() {
@@ -264,7 +276,7 @@ export class PlaneRadarCard extends LitElement {
           <div class="title">${cfg.title}</div>
           <div class="contacts">${inRange} CONTACT${inRange === 1 ? '' : 'S'}</div>
         </div>
-        <div class="radar-wrap">
+        <div class="radar-wrap" style=${cfg.height ? `--radar-h: ${cfg.height}px` : ''}>
           <canvas @click=${this._onCanvasClick}></canvas>
           <div class="scanlines"></div>
           <div class="vignette"></div>

@@ -5,6 +5,7 @@ A military-style, sweeping green-phosphor **radar** for your Home Assistant dash
 - 📡 **Live ADS-B data** relayed through the integration from free public aggregators ([adsb.lol](https://adsb.lol) or [adsb.fi](https://adsb.fi)) — no API key, no account
 - 🏠 **Home Assistant home location** (`zone.home`, with fallback to your system location) or **manual latitude/longitude**
 - 🟢 **Old-school CRT sweep** — rotating beam with phosphor afterglow, range rings, degree ticks, cardinal letters, scanlines and a vignette
+- 📐 **Compact, configurable height** — the scope no longer grows to a full square on wide dashboards; set `height` in px (0 = square)
 - ✈️ **Blips light up as the sweep passes** and slowly fade; ground traffic shows as hollow amber squares
 - 🛰️ **Sweep-synchronised updates** — new positions are held until the beam crosses each aircraft, so contacts refresh one at a time instead of all jumping together
 - 🧭 **Range in nautical miles, miles or kilometres** — one unit setting drives the range slider, ring labels and flight details
@@ -55,7 +56,7 @@ adding a card.
 
 ```yaml
 resources:
-  - url: /plane_radar/plane-radar-card.js?v=0.3.0
+  - url: /plane_radar/plane-radar-card.js?v=0.4.0
     type: module
 ```
 
@@ -76,6 +77,7 @@ rings: 4                 # number of range rings (1–8)
 update_interval: 10      # seconds between ADS-B polls (min 5)
 sweep_duration: 6        # seconds per full 360° sweep
 trail_seconds: 60        # historical track length in seconds (0 disables)
+height: 360              # radar scope height in px (0 = square, sized from width)
 show_labels: true        # permanent callsign labels next to blips
 ```
 
@@ -95,6 +97,7 @@ show_labels: true        # permanent callsign labels next to blips
 | `update_interval` | number  | `10`               | Seconds between polls (5–300)                        |
 | `sweep_duration`  | number  | `6`                | Seconds per sweep revolution                         |
 | `trail_seconds`   | number  | `60`               | Historical track length in seconds (0–300, 0 = off)  |
+| `height`          | number  | `360`              | Radar scope height in px (0 = square from card width) |
 | `show_labels`     | boolean | `true`             | Permanently show callsigns next to blips             |
 | `api_url`         | string  | —                  | Advanced: override proxy URL (see below)             |
 
@@ -152,7 +155,7 @@ Tag a version and push — the release workflow rebuilds the bundle and attaches
 it to the GitHub release:
 
 ```bash
-git tag v0.3.0 && git push --tags
+git tag v0.4.0 && git push --tags
 ```
 
 ## License

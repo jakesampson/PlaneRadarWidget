@@ -50,15 +50,21 @@ export const cardStyles = css`
 
   .radar-wrap {
     position: relative;
-    aspect-ratio: 1 / 1;
     width: 100%;
+    /* Fixed scope height keeps the card compact on wide dashboards. Without
+       --radar-h the scope falls back to a square sized from the card width. */
+    height: var(--radar-h, auto);
+    aspect-ratio: 1 / 1;
     background: radial-gradient(circle at center, #04281a 0%, #02180f 75%, #010f09 100%);
   }
 
   canvas {
     position: absolute;
-    inset: 0;
-    width: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    /* Stay square and centred inside a wider card instead of stretching. */
+    width: min(100%, var(--radar-h, 100%));
     height: 100%;
     display: block;
     cursor: crosshair;
@@ -146,9 +152,10 @@ export const cardStyles = css`
   /* Flight details panel */
   .details {
     position: absolute;
-    left: 10px;
-    right: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 10px;
+    width: min(calc(100% - 20px), calc(var(--radar-h, 100%) - 20px));
     z-index: 6;
     background: rgba(2, 24, 15, 0.92);
     border: 1px solid rgba(43, 255, 160, 0.45);

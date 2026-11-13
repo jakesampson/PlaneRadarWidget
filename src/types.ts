@@ -55,6 +55,8 @@ export interface PlaneRadarCardConfig {
   distance_unit?: DistanceUnit;
   /** Seconds of historical track to draw behind each aircraft (0 disables). */
   trail_seconds?: number;
+  /** Radar scope height in pixels (0 = square, sized from the card width). */
+  height?: number;
   /** Show callsign labels next to blips. */
   show_labels?: boolean;
 }

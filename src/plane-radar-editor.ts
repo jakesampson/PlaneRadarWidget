@@ -16,6 +16,7 @@ const LABELS: Record<string, string> = {
   update_interval: 'Update interval (seconds)',
   sweep_duration: 'Sweep duration (seconds / revolution)',
   trail_seconds: 'Historical track (seconds)',
+  height: 'Radar height (px, 0 = fit card width)',
   show_labels: 'Show callsign labels',
 };
 
@@ -141,6 +142,7 @@ export class PlaneRadarCardEditor extends LitElement {
       { name: 'update_interval', selector: { number: { min: 5, max: 300, step: 5, mode: 'slider' } } },
       { name: 'sweep_duration', selector: { number: { min: 2, max: 20, step: 0.5, mode: 'slider' } } },
       { name: 'trail_seconds', selector: { number: { min: 0, max: 300, step: 10, mode: 'slider' } } },
+      { name: 'height', selector: { number: { min: 0, max: 800, step: 20, mode: 'slider' } } },
       { name: 'show_labels', selector: { boolean: {} } },
       { name: 'api_url', selector: { text: { type: 'url', placeholder: 'https://my-proxy.example.com/aircraft' } } },
     );
@@ -163,6 +165,7 @@ export class PlaneRadarCardEditor extends LitElement {
       sweep_duration: 6,
       rings: 4,
       trail_seconds: 60,
+      height: 360,
       provider: 'adsb.lol',
       location_mode: 'ha',
       show_labels: true,
@@ -183,7 +186,9 @@ export class PlaneRadarCardEditor extends LitElement {
         location from your HA configuration). Manual mode lets you point the radar at any
         coordinates. The distance unit applies to the range setting, ring labels and flight
         details. Historical tracks show the last <code>trail_seconds</code> (0 disables them)
-        and reset whenever the card is reloaded. By default aircraft data is relayed by the
+        and reset whenever the card is reloaded. <code>height</code> caps the radar scope
+        height so the card stays compact on wide dashboards — set it to 0 to size the scope
+        from the card width instead. By default aircraft data is relayed by the
         <b>Plane Radar integration</b> (required). <code>api_url</code> is an advanced override
         for a custom compatible proxy — it receives
         <code>?lat=&amp;lon=&amp;radius=&amp;provider=</code> and must return readsb-style
