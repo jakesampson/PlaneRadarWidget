@@ -6,6 +6,9 @@ A military-style, sweeping green-phosphor **radar** for your Home Assistant dash
 - 🏠 **Home Assistant home location** (`zone.home`, with fallback to your system location) or **manual latitude/longitude**
 - 🟢 **Old-school CRT sweep** — rotating beam with phosphor afterglow, range rings, degree ticks, cardinal letters, scanlines and a vignette
 - ✈️ **Blips light up as the sweep passes** and slowly fade; ground traffic shows as hollow amber squares
+- 🧭 **Range in nautical miles, miles or kilometres** — one unit setting drives the range slider, ring labels and flight details
+- 📝 **Permanent callsign labels** next to every in-range contact
+- 🛤️ **One-minute historical tracks** behind each aircraft, reset when the card reloads
 - 🎯 **Click any blip** for flight details: altitude, ground speed, track, vertical rate, distance, bearing, squawk, signal strength
 - ⚙️ **Visual editor** — everything configurable from the UI, no YAML required
 
@@ -51,7 +54,7 @@ adding a card.
 
 ```yaml
 resources:
-  - url: /plane_radar/plane-radar-card.js?v=0.1.0
+  - url: /plane_radar/plane-radar-card.js?v=0.2.0
     type: module
 ```
 
@@ -66,12 +69,13 @@ location_mode: ha        # 'ha' = home zone / HA location, 'manual' = lat/long b
 # latitude: 52.5200      # only for location_mode: manual
 # longitude: 13.4050
 provider: adsb.lol       # adsb.lol | adsb.fi
-range_nm: 50             # radar radius in nautical miles (5–250)
+distance_unit: nm        # nm | mi | km — also sets the unit for `range`
+range: 50                # radar radius in `distance_unit` (5–250 nm equivalent)
 rings: 4                 # number of range rings (1–8)
 update_interval: 10      # seconds between ADS-B polls (min 5)
 sweep_duration: 6        # seconds per full 360° sweep
-distance_unit: nm        # nm | km (display only — API is always queried in nm)
-show_labels: true        # callsign labels next to blips
+trail_seconds: 60        # historical track length in seconds (0 disables)
+show_labels: true        # permanent callsign labels next to blips
 ```
 
 ### Options
@@ -83,12 +87,14 @@ show_labels: true        # callsign labels next to blips
 | `latitude`        | number  | —                  | Manual mode: radar center latitude                   |
 | `longitude`       | number  | —                  | Manual mode: radar center longitude                  |
 | `provider`        | string  | `adsb.lol`         | `adsb.lol` or `adsb.fi`                              |
-| `range_nm`        | number  | `50`               | Radar radius in nautical miles (5–250)               |
+| `distance_unit`   | string  | `nm`               | Unit for range, rings and details: `nm`, `mi` or `km` |
+| `range`           | number  | `50`               | Radar radius in `distance_unit` (max ~250 nm)        |
+| `range_nm`        | number  | —                  | Legacy radius in nautical miles (use `range` instead) |
 | `rings`           | number  | `4`                | Number of range rings                                |
 | `update_interval` | number  | `10`               | Seconds between polls (5–300)                        |
 | `sweep_duration`  | number  | `6`                | Seconds per sweep revolution                         |
-| `distance_unit`   | string  | `nm`               | Display unit: `nm` or `km`                           |
-| `show_labels`     | boolean | `true`             | Show callsigns next to blips                         |
+| `trail_seconds`   | number  | `60`               | Historical track length in seconds (0–300, 0 = off)  |
+| `show_labels`     | boolean | `true`             | Permanently show callsigns next to blips             |
 | `api_url`         | string  | —                  | Advanced: override proxy URL (see below)             |
 
 ### Where does the location come from?

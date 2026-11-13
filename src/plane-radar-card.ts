@@ -4,9 +4,9 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { RadarRenderer } from './radar-renderer';
 import { cardStyles } from './styles';
 import { fetchAircraft, MAX_RANGE_NM, MIN_RANGE_NM, PROVIDER_INFO } from './providers';
+import { formatDistance, nmToUnit, unitToNm } from './geo';
 import {
   formatAltitude,
-  formatDistance,
   formatHeading,
   formatSpeed,
   formatTime,
@@ -14,22 +14,24 @@ import {
 } from './format';
 import type {
   Aircraft,
+  DistanceUnit,
   HomeAssistant,
   PlaneRadarCardConfig,
   ProviderId,
   ResolvedLocation,
 } from './types';
 
-const CARD_VERSION = '0.1.0';
+const CARD_VERSION = '0.2.0';
 const DEFAULTS = {
   title: 'AIRSPACE RADAR',
   location_mode: 'ha' as const,
   provider: 'adsb.lol' as ProviderId,
-  range_nm: 50,
+  range: 50,
   rings: 4,
   update_interval: 10,
   sweep_duration: 6,
   distance_unit: 'nm' as const,
+  trail_seconds: 60,
   show_labels: true,
 };
 
@@ -48,6 +50,7 @@ export class PlaneRadarCard extends LitElement {
   private _pollTimer: number | null = null;
   private _fetching = false;
   private _hassNudged = false;
+  private _lastCenterKey: string | null = null;
 
   public setConfig(config: PlaneRadarCardConfig): void {
     if (!config || typeof config !== 'object') {
@@ -65,10 +68,27 @@ export class PlaneRadarCard extends LitElement {
       }
     }
 
-    merged.range_nm = clamp(merged.range_nm ?? DEFAULTS.range_nm, MIN_RANGE_NM, MAX_RANGE_NM);
+    const unit =
+      merged.distance_unit === 'km' || merged.distance_unit === 'mi' ? merged.distance_unit : 'nm';
+    merged.distance_unit = unit;
+
+    // `range` is expressed in the selected unit; `range_nm` is the legacy
+    // nautical-mile option and is still honoured for existing dashboards.
+    let rangeNm: number;
+    if (typeof config.range === 'number' && Number.isFinite(config.range)) {
+      rangeNm = unitToNm(config.range, unit);
+    } else if (typeof config.range_nm === 'number' && Number.isFinite(config.range_nm)) {
+      rangeNm = config.range_nm;
+    } else {
+      rangeNm = unitToNm(DEFAULTS.range, unit);
+    }
+    merged.range_nm = clamp(rangeNm, MIN_RANGE_NM, MAX_RANGE_NM);
+    merged.range = Math.round(nmToUnit(merged.range_nm, unit) * 10) / 10;
+
     merged.rings = clamp(Math.round(merged.rings ?? DEFAULTS.rings), 1, 8);
     merged.update_interval = clamp(merged.update_interval ?? DEFAULTS.update_interval, 5, 300);
     merged.sweep_duration = clamp(merged.sweep_duration ?? DEFAULTS.sweep_duration, 2, 20);
+    merged.trail_seconds = clamp(Math.round(merged.trail_seconds ?? DEFAULTS.trail_seconds), 0, 300);
 
     this._config = merged;
     this._applyRendererOptions();
@@ -80,7 +100,7 @@ export class PlaneRadarCard extends LitElement {
   }
 
   public static getStubConfig() {
-    return { location_mode: 'ha', range_nm: 50, rings: 4, provider: 'adsb.lol' };
+    return { location_mode: 'ha', range: 50, distance_unit: 'nm', rings: 4, provider: 'adsb.lol' };
   }
 
   public static getConfigElement() {
@@ -89,6 +109,7 @@ export class PlaneRadarCard extends LitElement {
 
   public connectedCallback(): void {
     super.connectedCallback();
+    this._ensureRenderer();
     this._restartPolling();
   }
 
@@ -97,20 +118,19 @@ export class PlaneRadarCard extends LitElement {
     this._stopPolling();
     this._renderer?.destroy();
     this._renderer = null;
+    // A fresh renderer starts with an empty track history.
+    this._lastCenterKey = null;
   }
 
   protected firstUpdated(): void {
-    const canvas = this.renderRoot.querySelector<HTMLCanvasElement>('canvas');
-    if (canvas) {
-      this._renderer = new RadarRenderer(canvas);
-      this._applyRendererOptions();
-      this._renderer.setAircraft(this._aircraft);
-      this._renderer.start();
-    }
+    this._ensureRenderer();
     this._restartPolling();
   }
 
   protected updated(): void {
+    // Recreate the canvas renderer if the element was detached and re-attached
+    // (e.g. navigating between dashboard views).
+    this._ensureRenderer();
     this._applyRendererOptions();
     // Fetch promptly once the hass object is available, instead of waiting
     // for the first poll tick (up to update_interval seconds).
@@ -118,6 +138,16 @@ export class PlaneRadarCard extends LitElement {
       this._hassNudged = true;
       this._poll();
     }
+  }
+
+  private _ensureRenderer(): void {
+    if (this._renderer) return;
+    const canvas = this.renderRoot.querySelector<HTMLCanvasElement>('canvas');
+    if (!canvas) return;
+    this._renderer = new RadarRenderer(canvas);
+    this._applyRendererOptions();
+    this._renderer.setAircraft(this._aircraft);
+    this._renderer.start();
   }
 
   private _applyRendererOptions(): void {
@@ -129,6 +159,7 @@ export class PlaneRadarCard extends LitElement {
       distanceUnit: this._config.distance_unit ?? 'nm',
       showLabels: this._config.show_labels ?? true,
       selectedId: this._selected?.id ?? null,
+      trailSeconds: this._config.trail_seconds ?? 60,
     });
   }
 
@@ -176,6 +207,13 @@ export class PlaneRadarCard extends LitElement {
     if (!cfg || this._fetching) return;
     const location = this._resolveLocation();
     if (!location || !this.hass) return; // notice is rendered instead
+
+    // A moved radar centre invalidates all polar track history.
+    const centerKey = `${location.latitude.toFixed(5)},${location.longitude.toFixed(5)}`;
+    if (this._lastCenterKey !== null && this._lastCenterKey !== centerKey) {
+      this._renderer?.clearHistory();
+    }
+    this._lastCenterKey = centerKey;
 
     this._fetching = true;
     try {
@@ -245,7 +283,7 @@ export class PlaneRadarCard extends LitElement {
           ${this._selected ? this._renderDetails(this._selected, unit) : nothing}
         </div>
         <div class="footer">
-          <span class="seg">SRC ${provider.name.toUpperCase()} · RNG ${cfg.range_nm} NM</span>
+          <span class="seg">SRC ${provider.name.toUpperCase()} · RNG ${formatDistance(cfg.range_nm!, unit)}</span>
           <span class="seg">
             ${location
               ? `${location.latitude.toFixed(3)}° / ${location.longitude.toFixed(3)}° · ${location.source.toUpperCase()}`
@@ -263,7 +301,7 @@ export class PlaneRadarCard extends LitElement {
     `;
   }
 
-  private _renderDetails(ac: Aircraft, unit: 'nm' | 'km') {
+  private _renderDetails(ac: Aircraft, unit: DistanceUnit) {
     const fields: Array<[string, string]> = [
       ['Altitude', formatAltitude(ac.altitudeFt, ac.onGround)],
       ['Ground speed', formatSpeed(ac.speedKt)],

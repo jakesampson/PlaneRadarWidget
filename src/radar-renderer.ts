@@ -16,6 +16,8 @@ export interface RadarOptions {
   distanceUnit: DistanceUnit;
   showLabels: boolean;
   selectedId: string | null;
+  /** Seconds of historical track to draw behind each aircraft. 0 disables. */
+  trailSeconds: number;
 }
 
 const PHOSPHOR = '#2bffa0';
@@ -27,10 +29,20 @@ const TRAIL_DEG = 78; // how far behind the beam the phosphor "afterglow" reache
 const TAU = Math.PI * 2;
 const DEG = Math.PI / 180;
 
+const MAX_TRAIL_POINTS = 240;
+
 interface Layout {
   cx: number;
   cy: number;
   radius: number; // outer rim radius in CSS px
+}
+
+/** One sampled position of an aircraft, in polar coordinates around the radar. */
+interface TrackPoint {
+  /** performance.now() timestamp of the sample. */
+  t: number;
+  distanceNm: number;
+  bearingDeg: number;
 }
 
 export class RadarRenderer {
@@ -44,10 +56,12 @@ export class RadarRenderer {
     distanceUnit: 'nm',
     showLabels: true,
     selectedId: null,
+    trailSeconds: 60,
   };
   private raf = 0;
   private layout: Layout = { cx: 0, cy: 0, radius: 0 };
   private resizeObserver: ResizeObserver;
+  private trails = new Map<string, TrackPoint[]>();
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -62,14 +76,25 @@ export class RadarRenderer {
   destroy(): void {
     cancelAnimationFrame(this.raf);
     this.resizeObserver.disconnect();
+    this.trails.clear();
   }
 
   setAircraft(list: Aircraft[]): void {
     this.aircraft = list;
+    this.recordTracks(list);
   }
 
   setOptions(options: Partial<RadarOptions>): void {
+    const previousTrail = this.options.trailSeconds;
     this.options = { ...this.options, ...options };
+    if (options.trailSeconds !== undefined && options.trailSeconds !== previousTrail) {
+      this.recordTracks(this.aircraft);
+    }
+  }
+
+  /** Forget all historical tracks (e.g. the radar centre moved or the card reloaded). */
+  clearHistory(): void {
+    this.trails.clear();
   }
 
   getLayout(): Layout {
@@ -105,9 +130,65 @@ export class RadarRenderer {
   }
 
   private project(ac: Aircraft, cx: number, cy: number, radius: number): { x: number; y: number } {
-    const r = (ac.distanceNm / this.options.rangeNm) * radius;
-    const angle = (ac.bearingDeg - 90) * DEG; // 0° bearing = up
+    return this.projectPolar(ac.distanceNm, ac.bearingDeg, cx, cy, radius);
+  }
+
+  private projectPolar(
+    distanceNm: number,
+    bearingDeg: number,
+    cx: number,
+    cy: number,
+    radius: number,
+  ): { x: number; y: number } {
+    const r = (distanceNm / this.options.rangeNm) * radius;
+    const angle = (bearingDeg - 90) * DEG; // 0° bearing = up
     return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+  }
+
+  /**
+   * Append the latest reported position to each aircraft's track and prune
+   * samples older than `trailSeconds`. Tracks live only in memory, so a page
+   * reload (or a new renderer) starts with a clean scope.
+   */
+  private recordTracks(list: Aircraft[]): void {
+    const seconds = this.options.trailSeconds;
+    if (seconds <= 0) {
+      this.trails.clear();
+      return;
+    }
+
+    const now = performance.now();
+    const maxAge = seconds * 1000;
+    const reported = new Set<string>();
+
+    for (const ac of list) {
+      reported.add(ac.id);
+      const trail = this.trails.get(ac.id) ?? [];
+      const last = trail[trail.length - 1];
+
+      // Don't store duplicate samples when the same position is re-rendered,
+      // but always sample again once the aircraft has actually moved.
+      const moved =
+        !last ||
+        Math.abs(last.distanceNm - ac.distanceNm) > 0.005 ||
+        Math.abs(last.bearingDeg - ac.bearingDeg) > 0.05;
+      if (moved && (!last || now - last.t >= 1000)) {
+        trail.push({ t: now, distanceNm: ac.distanceNm, bearingDeg: ac.bearingDeg });
+      }
+
+      while (trail.length > 0 && now - trail[0].t > maxAge) trail.shift();
+      if (trail.length > MAX_TRAIL_POINTS) trail.splice(0, trail.length - MAX_TRAIL_POINTS);
+      this.trails.set(ac.id, trail);
+    }
+
+    // Expire tracks of aircraft that are no longer reported.
+    for (const [id, trail] of this.trails) {
+      if (!reported.has(id)) {
+        const fresh = trail.filter((point) => now - point.t <= maxAge);
+        if (fresh.length === 0) this.trails.delete(id);
+        else if (fresh.length !== trail.length) this.trails.set(id, fresh);
+      }
+    }
   }
 
   private resize(): void {
@@ -143,6 +224,7 @@ export class RadarRenderer {
     this.drawGrid(cx, cy, radius);
     this.drawRim(cx, cy, radius);
     this.drawSweep(cx, cy, radius, sweepDeg, now);
+    this.drawTrails(cx, cy, radius, now);
     this.drawBlips(cx, cy, radius, sweepDeg, now);
     this.drawOwnship(cx, cy);
   }
@@ -299,6 +381,52 @@ export class RadarRenderer {
     ctx.restore();
   }
 
+  /**
+   * Historical track: a fading phosphor line through the last
+   * `trailSeconds` of sampled positions (default one minute).
+   */
+  private drawTrails(cx: number, cy: number, radius: number, now: number): void {
+    const { ctx, options } = this;
+    const seconds = options.trailSeconds;
+    if (seconds <= 0 || this.trails.size === 0) return;
+
+    const maxAge = seconds * 1000;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, TAU);
+    ctx.clip();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = PHOSPHOR;
+
+    for (const [id, trail] of this.trails) {
+      if (trail.length < 2) continue;
+      const selected = options.selectedId === id;
+      const baseAlpha = selected ? 0.62 : 0.34;
+      ctx.lineWidth = selected ? 1.8 : 1.2;
+
+      for (let i = 1; i < trail.length; i++) {
+        const from = trail[i - 1];
+        const to = trail[i];
+        const age = now - to.t;
+        if (age > maxAge) continue;
+        const fade = Math.max(0, 1 - age / maxAge);
+        if (fade <= 0) continue;
+
+        const a = this.projectPolar(from.distanceNm, from.bearingDeg, cx, cy, radius);
+        const b = this.projectPolar(to.distanceNm, to.bearingDeg, cx, cy, radius);
+        ctx.globalAlpha = baseAlpha * fade;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+  }
+
   private drawBlips(cx: number, cy: number, radius: number, sweepDeg: number, now: number): void {
     const { ctx, options } = this;
     const blipSize = Math.max(6, Math.min(10, radius * 0.032));
@@ -322,48 +450,53 @@ export class RadarRenderer {
         ctx.lineWidth = 1.5;
         const s = blipSize * 0.75;
         ctx.strokeRect(x - s / 2, y - s / 2, s, s);
-        continue;
-      }
-
-      // Glow halo
-      const halo = ctx.createRadialGradient(x, y, 0, x, y, blipSize * 2.6);
-      halo.addColorStop(0, `rgba(120, 255, 200, ${(0.75 * alpha).toFixed(3)})`);
-      halo.addColorStop(1, 'rgba(43, 255, 160, 0)');
-      ctx.fillStyle = halo;
-      ctx.beginPath();
-      ctx.arc(x, y, blipSize * 2.6, 0, TAU);
-      ctx.fill();
-
-      // Plane glyph rotated to its track (falls back to bearing from receiver)
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate((ac.headingDeg ?? ac.bearingDeg) * DEG);
-      ctx.fillStyle = `rgba(140, 255, 205, ${alpha.toFixed(3)})`;
-      ctx.shadowColor = PHOSPHOR;
-      ctx.shadowBlur = selected ? 16 : 6 + 10 * glow;
-      this.tracePlane(blipSize);
-      ctx.fill();
-      ctx.restore();
-
-      // Selection brackets
-      if (selected) {
-        const s = blipSize + 7 + Math.sin(now / 300) * 1.5;
-        ctx.strokeStyle = PHOSPHOR_BRIGHT;
-        ctx.lineWidth = 1.6;
-        ctx.setLineDash([5, 4]);
-        ctx.lineDashOffset = -now / 40;
+      } else {
+        // Glow halo
+        const halo = ctx.createRadialGradient(x, y, 0, x, y, blipSize * 2.6);
+        halo.addColorStop(0, `rgba(120, 255, 200, ${(0.75 * alpha).toFixed(3)})`);
+        halo.addColorStop(1, 'rgba(43, 255, 160, 0)');
+        ctx.fillStyle = halo;
         ctx.beginPath();
-        ctx.arc(x, y, s, 0, TAU);
-        ctx.stroke();
-        ctx.setLineDash([]);
+        ctx.arc(x, y, blipSize * 2.6, 0, TAU);
+        ctx.fill();
+
+        // Plane glyph rotated to its track (falls back to bearing from receiver)
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate((ac.headingDeg ?? ac.bearingDeg) * DEG);
+        ctx.fillStyle = `rgba(140, 255, 205, ${alpha.toFixed(3)})`;
+        ctx.shadowColor = PHOSPHOR;
+        ctx.shadowBlur = selected ? 16 : 6 + 10 * glow;
+        this.tracePlane(blipSize);
+        ctx.fill();
+        ctx.restore();
+
+        // Selection brackets
+        if (selected) {
+          const s = blipSize + 7 + Math.sin(now / 300) * 1.5;
+          ctx.strokeStyle = PHOSPHOR_BRIGHT;
+          ctx.lineWidth = 1.6;
+          ctx.setLineDash([5, 4]);
+          ctx.lineDashOffset = -now / 40;
+          ctx.beginPath();
+          ctx.arc(x, y, s, 0, TAU);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
       }
 
-      // Callsign label, strongest right after the beam passes
-      if (options.showLabels && (glow > 0.28 || selected)) {
+      // Callsign labels stay on screen permanently (while the aircraft is in
+      // range) rather than fading with the sweep afterglow.
+      if (options.showLabels) {
+        const onRightHalf = x >= cx;
+        const offset = blipSize + 4;
         ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
-        ctx.textAlign = 'left';
-        ctx.fillStyle = `rgba(160, 255, 210, ${(0.55 + 0.45 * glow).toFixed(3)})`;
-        ctx.fillText(ac.callsign, x + blipSize + 4, y);
+        ctx.textAlign = onRightHalf ? 'right' : 'left';
+        ctx.fillStyle = selected ? '#d7ffeb' : 'rgba(160, 255, 210, 0.88)';
+        ctx.shadowColor = PHOSPHOR;
+        ctx.shadowBlur = selected ? 8 : 4;
+        ctx.fillText(ac.callsign, x + (onRightHalf ? -offset : offset), y);
+        ctx.shadowBlur = 0;
       }
     }
     ctx.restore();

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2026-11-13
+
+- Range can now be set in nautical miles, statute miles or kilometres; the
+  chosen unit also drives ring labels, flight details and the footer readout
+- Callsign labels are now permanent while an aircraft is in range instead of
+  fading with the sweep afterglow
+- Added one-minute historical tracks behind each aircraft (`trail_seconds`,
+  0 disables). History is in-memory and resets on reload or when the radar
+  centre moves
+- Card renderer is recreated when the element is re-attached to the DOM, so
+  the radar keeps animating after navigating between dashboard views
+- `range_nm` is retained as a deprecated alias for `range` (nautical miles)
+
 ## [0.1.0] - 2026-11-13
 
 Initial release.

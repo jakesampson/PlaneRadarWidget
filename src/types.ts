@@ -27,7 +27,7 @@ export interface HomeAssistant {
 
 export type LocationMode = 'ha' | 'manual';
 export type ProviderId = 'adsb.lol' | 'adsb.fi';
-export type DistanceUnit = 'nm' | 'km';
+export type DistanceUnit = 'nm' | 'mi' | 'km';
 
 export interface PlaneRadarCardConfig {
   type: string;
@@ -41,7 +41,9 @@ export interface PlaneRadarCardConfig {
   provider?: ProviderId;
   /** Optional override: custom proxy endpoint (advanced; replaces the integration). */
   api_url?: string;
-  /** Radar radius in nautical miles. */
+  /** Radar radius expressed in `distance_unit` (5–250 nm equivalent). */
+  range?: number;
+  /** @deprecated Legacy radius in nautical miles. Prefer `range` + `distance_unit`. */
   range_nm?: number;
   /** Number of range rings to draw. */
   rings?: number;
@@ -49,8 +51,10 @@ export interface PlaneRadarCardConfig {
   update_interval?: number;
   /** Seconds per full radar sweep revolution. */
   sweep_duration?: number;
-  /** Display unit for distances. The API is always queried in nautical miles. */
+  /** Unit used for the range setting, ring labels and distance readouts. */
   distance_unit?: DistanceUnit;
+  /** Seconds of historical track to draw behind each aircraft (0 disables). */
+  trail_seconds?: number;
   /** Show callsign labels next to blips. */
   show_labels?: boolean;
 }
