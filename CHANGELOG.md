@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-11-13
+
+- Aircraft positions now update only when the sweep passes over them. Polled
+  data is held per contact and painted when the beam crosses its bearing, so
+  the scope no longer jumps in unison every `update_interval` seconds
+- New contacts stay hidden until the sweep first reveals them
+- Historical track points are recorded at reveal time, keeping trails in sync
+  with the displayed blip position
+- Click hit-testing uses the position currently painted on the scope
+
 ## [0.2.0] - 2026-11-13
 
 - Range can now be set in nautical miles, statute miles or kilometres; the

@@ -1,9 +1,11 @@
 /**
  * Canvas renderer for the military-style sweeping radar.
  *
- * The sweep angle is derived from wall-clock time, and blip brightness is a
- * stateless function of the angular distance behind the sweep — so blips
- * "light up" as the beam passes over them and slowly fade.
+ * The sweep angle is derived from wall-clock time. Blip brightness is a
+ * stateless function of the angular distance behind the sweep, and newly
+ * polled positions are held back until the beam crosses the aircraft's
+ * bearing — so contacts appear to be "painted" one at a time by the sweep
+ * rather than every blip jumping at once.
  */
 
 import type { Aircraft, DistanceUnit } from './types';
@@ -45,6 +47,39 @@ interface TrackPoint {
   bearingDeg: number;
 }
 
+interface PolarPosition {
+  distanceNm: number;
+  bearingDeg: number;
+}
+
+/**
+ * Per-aircraft radar state.
+ *
+ * New ADS-B data is held as `pending` and only painted onto the scope when the
+ * sweep passes the aircraft's bearing — so contacts update one at a time as
+ * the beam reveals them, rather than every blip jumping at once.
+ */
+interface BlipState {
+  /** Position currently drawn on the scope. */
+  display: PolarPosition;
+  /** Heading currently used to rotate the plane glyph. */
+  headingDeg: number | null;
+  /** Latest reported position, waiting for the sweep to reach `revealDeg`. */
+  pending: (PolarPosition & { headingDeg: number | null }) | null;
+  /** Sweep angle (degrees) at which the pending position is painted. */
+  revealDeg: number;
+  /** False until the sweep has first revealed this contact. */
+  visible: boolean;
+}
+
+/** True when two polar positions are close enough to be considered identical. */
+function samePosition(a: PolarPosition, b: PolarPosition): boolean {
+  return (
+    Math.abs(a.distanceNm - b.distanceNm) <= 0.005 &&
+    Math.abs(a.bearingDeg - b.bearingDeg) <= 0.05
+  );
+}
+
 export class RadarRenderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
@@ -62,6 +97,8 @@ export class RadarRenderer {
   private layout: Layout = { cx: 0, cy: 0, radius: 0 };
   private resizeObserver: ResizeObserver;
   private trails = new Map<string, TrackPoint[]>();
+  private states = new Map<string, BlipState>();
+  private lastSweepDeg: number | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -77,24 +114,67 @@ export class RadarRenderer {
     cancelAnimationFrame(this.raf);
     this.resizeObserver.disconnect();
     this.trails.clear();
+    this.states.clear();
   }
 
   setAircraft(list: Aircraft[]): void {
     this.aircraft = list;
-    this.recordTracks(list);
+    const reported = new Set<string>();
+
+    for (const ac of list) {
+      reported.add(ac.id);
+      const state = this.states.get(ac.id);
+      if (!state) {
+        // New contact: hold it until the sweep first reaches its bearing.
+        this.states.set(ac.id, {
+          display: { distanceNm: ac.distanceNm, bearingDeg: ac.bearingDeg },
+          headingDeg: ac.headingDeg,
+          pending: {
+            distanceNm: ac.distanceNm,
+            bearingDeg: ac.bearingDeg,
+            headingDeg: ac.headingDeg,
+          },
+          revealDeg: ac.bearingDeg,
+          visible: false,
+        });
+        continue;
+      }
+
+      const target = state.pending ?? state.display;
+      if (!samePosition(target, ac)) {
+        state.pending = {
+          distanceNm: ac.distanceNm,
+          bearingDeg: ac.bearingDeg,
+          headingDeg: ac.headingDeg,
+        };
+        state.revealDeg = ac.bearingDeg;
+      }
+    }
+
+    // Drop contacts that are no longer reported by the API.
+    for (const id of this.states.keys()) {
+      if (!reported.has(id)) this.states.delete(id);
+    }
+
+    this.pruneTrails(performance.now());
   }
 
   setOptions(options: Partial<RadarOptions>): void {
     const previousTrail = this.options.trailSeconds;
     this.options = { ...this.options, ...options };
     if (options.trailSeconds !== undefined && options.trailSeconds !== previousTrail) {
-      this.recordTracks(this.aircraft);
+      this.pruneTrails(performance.now());
     }
   }
 
-  /** Forget all historical tracks (e.g. the radar centre moved or the card reloaded). */
+  /**
+   * Forget all tracks and contact states (e.g. the radar centre moved or the
+   * card reloaded). The next data update starts a clean scope.
+   */
   clearHistory(): void {
     this.trails.clear();
+    this.states.clear();
+    this.lastSweepDeg = null;
   }
 
   getLayout(): Layout {
@@ -117,8 +197,15 @@ export class RadarRenderer {
     let best: Aircraft | null = null;
     let bestDist = Infinity;
     for (const ac of this.aircraft) {
-      if (ac.distanceNm > rangeNm) continue;
-      const pos = this.project(ac, cx, cy, radius);
+      const state = this.states.get(ac.id);
+      if (!state || !state.visible || state.display.distanceNm > rangeNm) continue;
+      const pos = this.projectPolar(
+        state.display.distanceNm,
+        state.display.bearingDeg,
+        cx,
+        cy,
+        radius,
+      );
       const d = Math.hypot(pos.x - x, pos.y - y);
       const threshold = Math.max(16, radius * 0.045);
       if (d < threshold && d < bestDist) {
@@ -127,10 +214,6 @@ export class RadarRenderer {
       }
     }
     return best;
-  }
-
-  private project(ac: Aircraft, cx: number, cy: number, radius: number): { x: number; y: number } {
-    return this.projectPolar(ac.distanceNm, ac.bearingDeg, cx, cy, radius);
   }
 
   private projectPolar(
@@ -146,48 +229,72 @@ export class RadarRenderer {
   }
 
   /**
-   * Append the latest reported position to each aircraft's track and prune
-   * samples older than `trailSeconds`. Tracks live only in memory, so a page
-   * reload (or a new renderer) starts with a clean scope.
+   * Paint pending contact updates when the sweep crosses their bearing. This
+   * keeps every blip in step with the rotating beam instead of having the
+   * whole scope jump at once when a poll completes.
    */
-  private recordTracks(list: Aircraft[]): void {
+  private applyPendingReveals(sweepDeg: number, now: number): void {
+    const previous = this.lastSweepDeg;
+    this.lastSweepDeg = sweepDeg;
+    if (previous === null) return;
+
+    // Degrees the beam travelled this frame (clockwise, wrapping at 360).
+    const delta = (sweepDeg - previous + 360) % 360;
+    if (delta <= 0) return;
+
+    for (const [id, state] of this.states) {
+      if (!state.pending) continue;
+      // How far ahead the reveal bearing is from where the beam was.
+      const target = (state.revealDeg - previous + 360) % 360;
+      if (target > delta) continue;
+
+      state.display = {
+        distanceNm: state.pending.distanceNm,
+        bearingDeg: state.pending.bearingDeg,
+      };
+      state.headingDeg = state.pending.headingDeg;
+      state.pending = null;
+      state.visible = true;
+      this.pushTrackPoint(id, state.display.distanceNm, state.display.bearingDeg, now);
+    }
+  }
+
+  /** Append a revealed position to an aircraft's historical track. */
+  private pushTrackPoint(id: string, distanceNm: number, bearingDeg: number, now: number): void {
+    const seconds = this.options.trailSeconds;
+    if (seconds <= 0) return;
+
+    const maxAge = seconds * 1000;
+    const trail = this.trails.get(id) ?? [];
+    const last = trail[trail.length - 1];
+
+    // Avoid storing duplicate samples when the contact has not moved.
+    if (
+      !last ||
+      Math.abs(last.distanceNm - distanceNm) > 0.005 ||
+      Math.abs(last.bearingDeg - bearingDeg) > 0.05
+    ) {
+      trail.push({ t: now, distanceNm, bearingDeg });
+    }
+
+    while (trail.length > 0 && now - trail[0].t > maxAge) trail.shift();
+    if (trail.length > MAX_TRAIL_POINTS) trail.splice(0, trail.length - MAX_TRAIL_POINTS);
+    this.trails.set(id, trail);
+  }
+
+  /** Remove expired historical track samples. */
+  private pruneTrails(now: number): void {
     const seconds = this.options.trailSeconds;
     if (seconds <= 0) {
       this.trails.clear();
       return;
     }
 
-    const now = performance.now();
     const maxAge = seconds * 1000;
-    const reported = new Set<string>();
-
-    for (const ac of list) {
-      reported.add(ac.id);
-      const trail = this.trails.get(ac.id) ?? [];
-      const last = trail[trail.length - 1];
-
-      // Don't store duplicate samples when the same position is re-rendered,
-      // but always sample again once the aircraft has actually moved.
-      const moved =
-        !last ||
-        Math.abs(last.distanceNm - ac.distanceNm) > 0.005 ||
-        Math.abs(last.bearingDeg - ac.bearingDeg) > 0.05;
-      if (moved && (!last || now - last.t >= 1000)) {
-        trail.push({ t: now, distanceNm: ac.distanceNm, bearingDeg: ac.bearingDeg });
-      }
-
-      while (trail.length > 0 && now - trail[0].t > maxAge) trail.shift();
-      if (trail.length > MAX_TRAIL_POINTS) trail.splice(0, trail.length - MAX_TRAIL_POINTS);
-      this.trails.set(ac.id, trail);
-    }
-
-    // Expire tracks of aircraft that are no longer reported.
     for (const [id, trail] of this.trails) {
-      if (!reported.has(id)) {
-        const fresh = trail.filter((point) => now - point.t <= maxAge);
-        if (fresh.length === 0) this.trails.delete(id);
-        else if (fresh.length !== trail.length) this.trails.set(id, fresh);
-      }
+      const fresh = trail.filter((point) => now - point.t <= maxAge);
+      if (fresh.length === 0) this.trails.delete(id);
+      else if (fresh.length !== trail.length) this.trails.set(id, fresh);
     }
   }
 
@@ -219,6 +326,9 @@ export class RadarRenderer {
 
     const now = performance.now();
     const sweepDeg = ((now / 1000 / this.options.sweepDurationSec) * 360) % 360;
+
+    // Reveal contacts whose bearing the beam crossed this frame before drawing.
+    this.applyPendingReveals(sweepDeg, now);
 
     this.drawBackground(cx, cy, radius);
     this.drawGrid(cx, cy, radius);
@@ -434,11 +544,15 @@ export class RadarRenderer {
     ctx.textBaseline = 'middle';
 
     for (const ac of this.aircraft) {
-      if (ac.distanceNm > options.rangeNm) continue;
-      const { x, y } = this.project(ac, cx, cy, radius);
+      const state = this.states.get(ac.id);
+      // Contacts only appear once the sweep has revealed them.
+      if (!state || !state.visible) continue;
+      const { distanceNm, bearingDeg } = state.display;
+      if (distanceNm > options.rangeNm) continue;
+      const { x, y } = this.projectPolar(distanceNm, bearingDeg, cx, cy, radius);
 
       // Angular distance behind the beam, 0 when the beam is exactly on the blip.
-      const since = (sweepDeg - ac.bearingDeg + 360) % 360;
+      const since = (sweepDeg - bearingDeg + 360) % 360;
       const proximity = Math.max(0, 1 - since / TRAIL_DEG);
       const glow = Math.pow(proximity, 1.7);
       const alpha = 0.2 + 0.8 * glow;
@@ -463,7 +577,7 @@ export class RadarRenderer {
         // Plane glyph rotated to its track (falls back to bearing from receiver)
         ctx.save();
         ctx.translate(x, y);
-        ctx.rotate((ac.headingDeg ?? ac.bearingDeg) * DEG);
+        ctx.rotate((state.headingDeg ?? bearingDeg) * DEG);
         ctx.fillStyle = `rgba(140, 255, 205, ${alpha.toFixed(3)})`;
         ctx.shadowColor = PHOSPHOR;
         ctx.shadowBlur = selected ? 16 : 6 + 10 * glow;

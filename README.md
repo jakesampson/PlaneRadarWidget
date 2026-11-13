@@ -6,6 +6,7 @@ A military-style, sweeping green-phosphor **radar** for your Home Assistant dash
 - 🏠 **Home Assistant home location** (`zone.home`, with fallback to your system location) or **manual latitude/longitude**
 - 🟢 **Old-school CRT sweep** — rotating beam with phosphor afterglow, range rings, degree ticks, cardinal letters, scanlines and a vignette
 - ✈️ **Blips light up as the sweep passes** and slowly fade; ground traffic shows as hollow amber squares
+- 🛰️ **Sweep-synchronised updates** — new positions are held until the beam crosses each aircraft, so contacts refresh one at a time instead of all jumping together
 - 🧭 **Range in nautical miles, miles or kilometres** — one unit setting drives the range slider, ring labels and flight details
 - 📝 **Permanent callsign labels** next to every in-range contact
 - 🛤️ **One-minute historical tracks** behind each aircraft, reset when the card reloads
@@ -54,7 +55,7 @@ adding a card.
 
 ```yaml
 resources:
-  - url: /plane_radar/plane-radar-card.js?v=0.2.0
+  - url: /plane_radar/plane-radar-card.js?v=0.3.0
     type: module
 ```
 
@@ -151,7 +152,7 @@ Tag a version and push — the release workflow rebuilds the bundle and attaches
 it to the GitHub release:
 
 ```bash
-git tag v0.2.0 && git push --tags
+git tag v0.3.0 && git push --tags
 ```
 
 ## License
