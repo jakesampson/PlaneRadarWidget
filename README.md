@@ -3,7 +3,7 @@
 A military-style, sweeping green-phosphor **radar** for your Home Assistant dashboard, showing live ADS-B aircraft traffic around your home — or anywhere you point it.
 
 - 📡 **Live ADS-B data** relayed through the integration from free public aggregators ([adsb.lol](https://adsb.lol) or [adsb.fi](https://adsb.fi)) — no API key, no account
-- 🏠 **Home Assistant home location** (`zone.home`, with fallback to your system location) or **manual latitude/longitude**
+- 🏠 **Home Assistant home location** (`zone.home`, with fallback to your system location) or **manual latitude/longitude** — marked at the centre of the scope with a house glyph
 - 🟢 **Old-school CRT sweep** — rotating beam with phosphor afterglow, range rings, degree ticks, cardinal letters, scanlines and a vignette
 - 📐 **Compact, configurable height** — the scope no longer grows to a full square on wide dashboards; set `height` in px (0 = square)
 - ✈️ **Blips light up as the sweep passes** and slowly fade; ground traffic shows as hollow amber squares
@@ -56,7 +56,7 @@ adding a card.
 
 ```yaml
 resources:
-  - url: /plane_radar/plane-radar-card.js?v=0.4.0
+  - url: /plane_radar/plane-radar-card.js?v=1.0.0
     type: module
 ```
 
@@ -142,7 +142,7 @@ Layout:
 | Path | Purpose |
 |------|---------|
 | `src/plane-radar-card.ts` | Card element: polling, location resolution, details panel |
-| `src/radar-renderer.ts`   | Canvas renderer: sweep, rings, rim ticks, blips, ownship glyph |
+| `src/radar-renderer.ts`   | Canvas renderer: sweep, rings, rim ticks, blips, home marker glyph |
 | `src/providers.ts`        | Integration-proxied (or `api_url`) fetch + response normalization |
 | `src/geo.ts`              | Haversine distance & bearing |
 | `src/plane-radar-editor.ts` | Visual config editor (ha-form) |
@@ -155,7 +155,7 @@ Tag a version and push — the release workflow rebuilds the bundle and attaches
 it to the GitHub release:
 
 ```bash
-git tag v0.4.0 && git push --tags
+git tag v1.0.0 && git push --tags
 ```
 
 ## License

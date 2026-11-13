@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2026-11-13
+
+First stable release.
+
+- The radar centre marker is now a **house** glyph instead of an aircraft
+  silhouette, matching the home-location concept
+- Everything from the 0.x series is considered stable: unit-aware range
+  (`nm`/`mi`/`km`), sweep-synchronised blip updates, permanent callsign
+  labels, one-minute historical tracks, and the configurable scope height
+
 ## [0.4.0] - 2026-11-13
 
 - Added a `height` option (default 360 px) that caps the radar scope height,

@@ -21,7 +21,7 @@ import type {
   ResolvedLocation,
 } from './types';
 
-const CARD_VERSION = '0.4.0';
+const CARD_VERSION = '1.0.0';
 const DEFAULTS = {
   title: 'AIRSPACE RADAR',
   location_mode: 'ha' as const,

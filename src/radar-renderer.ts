@@ -336,7 +336,7 @@ export class RadarRenderer {
     this.drawSweep(cx, cy, radius, sweepDeg, now);
     this.drawTrails(cx, cy, radius, now);
     this.drawBlips(cx, cy, radius, sweepDeg, now);
-    this.drawOwnship(cx, cy);
+    this.drawHome(cx, cy);
   }
 
   private drawBackground(cx: number, cy: number, radius: number): void {
@@ -640,15 +640,35 @@ export class RadarRenderer {
     ctx.closePath();
   }
 
-  private drawOwnship(cx: number, cy: number): void {
+  /** Simple house silhouette for the radar centre (home location). */
+  private traceHouse(size: number): void {
+    const { ctx } = this;
+    const s = size / 10;
+    ctx.beginPath();
+    ctx.moveTo(-9 * s, -1 * s);   // left eave
+    ctx.lineTo(0, -9 * s);        // roof apex
+    ctx.lineTo(9 * s, -1 * s);    // right eave
+    ctx.lineTo(7 * s, -1 * s);    // body top right
+    ctx.lineTo(7 * s, 9 * s);     // body bottom right
+    ctx.lineTo(2.5 * s, 9 * s);   // door right
+    ctx.lineTo(2.5 * s, 3 * s);   // door top right
+    ctx.lineTo(-2.5 * s, 3 * s);  // door top left
+    ctx.lineTo(-2.5 * s, 9 * s);  // door left
+    ctx.lineTo(-7 * s, 9 * s);    // body bottom left
+    ctx.lineTo(-7 * s, -1 * s);   // body top left
+    ctx.closePath();
+  }
+
+  private drawHome(cx: number, cy: number): void {
     const { ctx } = this;
     ctx.save();
     ctx.translate(cx, cy);
     ctx.strokeStyle = PHOSPHOR_BRIGHT;
     ctx.lineWidth = 1.6;
+    ctx.lineJoin = 'round';
     ctx.shadowColor = PHOSPHOR;
     ctx.shadowBlur = 8;
-    this.tracePlane(7);
+    this.traceHouse(8);
     ctx.stroke();
     ctx.restore();
   }

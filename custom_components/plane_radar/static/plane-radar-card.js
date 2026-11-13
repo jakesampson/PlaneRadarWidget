@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 const Z = globalThis, lt = Z.ShadowRoot && (Z.ShadyCSS === void 0 || Z.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, ct = Symbol(), mt = /* @__PURE__ */ new WeakMap();
-let Tt = class {
+let Rt = class {
   constructor(t, s, e) {
     if (this._$cssResult$ = !0, e !== ct) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
     this.cssText = t, this.t = s;
@@ -22,13 +22,13 @@ let Tt = class {
     return this.cssText;
   }
 };
-const Ft = (i) => new Tt(typeof i == "string" ? i : i + "", void 0, ct), jt = (i, ...t) => {
+const Ft = (i) => new Rt(typeof i == "string" ? i : i + "", void 0, ct), jt = (i, ...t) => {
   const s = i.length === 1 ? i[0] : t.reduce((e, n, o) => e + ((r) => {
     if (r._$cssResult$ === !0) return r.cssText;
     if (typeof r == "number") return r;
     throw Error("Value passed to 'css' function must be a 'css' function result: " + r + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
   })(n) + i[o + 1], i[0]);
-  return new Tt(s, i, ct);
+  return new Rt(s, i, ct);
 }, Bt = (i, t) => {
   if (lt) i.adoptedStyleSheets = t.map((s) => s instanceof CSSStyleSheet ? s : s.styleSheet);
   else for (const s of t) {
@@ -45,10 +45,10 @@ const Ft = (i) => new Tt(typeof i == "string" ? i : i + "", void 0, ct), jt = (i
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: qt, defineProperty: Gt, getOwnPropertyDescriptor: Wt, getOwnPropertyNames: Kt, getOwnPropertySymbols: Vt, getPrototypeOf: Xt } = Object, et = globalThis, bt = et.trustedTypes, Jt = bt ? bt.emptyScript : "", Zt = et.reactiveElementPolyfillSupport, B = (i, t) => i, Y = { toAttribute(i, t) {
+const { is: qt, defineProperty: Gt, getOwnPropertyDescriptor: Wt, getOwnPropertyNames: Kt, getOwnPropertySymbols: Vt, getPrototypeOf: Jt } = Object, et = globalThis, bt = et.trustedTypes, Xt = bt ? bt.emptyScript : "", Zt = et.reactiveElementPolyfillSupport, B = (i, t) => i, Y = { toAttribute(i, t) {
   switch (t) {
     case Boolean:
-      i = i ? Jt : null;
+      i = i ? Xt : null;
       break;
     case Object:
     case Array:
@@ -104,7 +104,7 @@ let D = class extends HTMLElement {
   }
   static _$Ei() {
     if (this.hasOwnProperty(B("elementProperties"))) return;
-    const t = Xt(this);
+    const t = Jt(this);
     t.finalize(), t.l !== void 0 && (this.l = [...t.l]), this.elementProperties = new Map(t.elementProperties);
   }
   static finalize() {
@@ -262,9 +262,9 @@ D.elementStyles = [], D.shadowRootOptions = { mode: "open" }, D[B("elementProper
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const ht = globalThis, vt = (i) => i, Q = ht.trustedTypes, yt = Q ? Q.createPolicy("lit-html", { createHTML: (i) => i }) : void 0, Nt = "$lit$", y = `lit$${Math.random().toFixed(9).slice(2)}$`, Dt = "?" + y, Yt = `<${Dt}>`, E = document, q = () => E.createComment(""), G = (i) => i === null || typeof i != "object" && typeof i != "function", pt = Array.isArray, Qt = (i) => pt(i) || typeof i?.[Symbol.iterator] == "function", it = `[ 	
+const ht = globalThis, vt = (i) => i, Q = ht.trustedTypes, yt = Q ? Q.createPolicy("lit-html", { createHTML: (i) => i }) : void 0, Nt = "$lit$", y = `lit$${Math.random().toFixed(9).slice(2)}$`, Dt = "?" + y, Yt = `<${Dt}>`, T = document, q = () => T.createComment(""), G = (i) => i === null || typeof i != "object" && typeof i != "function", pt = Array.isArray, Qt = (i) => pt(i) || typeof i?.[Symbol.iterator] == "function", it = `[ 	
 \f\r]`, F = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, xt = /-->/g, wt = />/g, w = RegExp(`>|${it}(?:([^\\s"'>=/]+)(${it}*=${it}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), At = /'/g, St = /"/g, kt = /^(?:script|style|textarea|title)$/i, te = (i) => (t, ...s) => ({ _$litType$: i, strings: t, values: s }), M = te(1), U = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), Mt = /* @__PURE__ */ new WeakMap(), C = E.createTreeWalker(E, 129);
+\f\r"'\`<>=]|("|')|))|$)`, "g"), At = /'/g, St = /"/g, kt = /^(?:script|style|textarea|title)$/i, te = (i) => (t, ...s) => ({ _$litType$: i, strings: t, values: s }), M = te(1), U = Symbol.for("lit-noChange"), u = Symbol.for("lit-nothing"), Mt = /* @__PURE__ */ new WeakMap(), C = T.createTreeWalker(T, 129);
 function Ot(i, t) {
   if (!pt(i) || !i.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return yt !== void 0 ? yt.createHTML(t) : t;
@@ -314,7 +314,7 @@ class W {
     }
   }
   static createElement(t, s) {
-    const e = E.createElement("template");
+    const e = T.createElement("template");
     return e.innerHTML = t, e;
   }
 }
@@ -335,7 +335,7 @@ class se {
     return this._$AM._$AU;
   }
   u(t) {
-    const { el: { content: s }, parts: e } = this._$AD, n = (t?.creationScope ?? E).importNode(s, !0);
+    const { el: { content: s }, parts: e } = this._$AD, n = (t?.creationScope ?? T).importNode(s, !0);
     C.currentNode = n;
     let o = C.nextNode(), r = 0, l = 0, a = e[0];
     for (; a !== void 0; ) {
@@ -345,7 +345,7 @@ class se {
       }
       r !== a?.index && (o = C.nextNode(), r++);
     }
-    return C.currentNode = E, n;
+    return C.currentNode = T, n;
   }
   p(t) {
     let s = 0;
@@ -380,7 +380,7 @@ class K {
     this._$AH !== t && (this._$AR(), this._$AH = this.O(t));
   }
   _(t) {
-    this._$AH !== u && G(this._$AH) ? this._$AA.nextSibling.data = t : this.T(E.createTextNode(t)), this._$AH = t;
+    this._$AH !== u && G(this._$AH) ? this._$AA.nextSibling.data = t : this.T(T.createTextNode(t)), this._$AH = t;
   }
   $(t) {
     const { values: s, _$litType$: e } = t, n = typeof e == "number" ? this._$AC(t) : (e.el === void 0 && (e.el = W.createElement(Ot(e.h, e.h[0]), this.options)), e);
@@ -600,7 +600,7 @@ function at(i, t) {
   const s = k(i, t), e = t === "km" ? "km" : t === "mi" ? "mi" : "nm";
   return s < 10 ? `${s.toFixed(1)} ${e}` : `${Math.round(s)} ${e}`;
 }
-const b = "#2bffa0", J = "#8affce", Ct = "rgba(43, 255, 160, 0.28)", Pt = "rgba(43, 255, 160, 0.12)", nt = 78, A = Math.PI * 2, S = Math.PI / 180, Et = 240;
+const b = "#2bffa0", X = "#8affce", Ct = "rgba(43, 255, 160, 0.28)", Pt = "rgba(43, 255, 160, 0.12)", nt = 78, A = Math.PI * 2, S = Math.PI / 180, Tt = 240;
 function ve(i, t) {
   return Math.abs(i.distanceNm - t.distanceNm) <= 5e-3 && Math.abs(i.bearingDeg - t.bearingDeg) <= 0.05;
 }
@@ -719,7 +719,7 @@ class ye {
     if (o <= 0) return;
     const r = o * 1e3, l = this.trails.get(t) ?? [], a = l[l.length - 1];
     for ((!a || Math.abs(a.distanceNm - s) > 5e-3 || Math.abs(a.bearingDeg - e) > 0.05) && l.push({ t: n, distanceNm: s, bearingDeg: e }); l.length > 0 && n - l[0].t > r; ) l.shift();
-    l.length > Et && l.splice(0, l.length - Et), this.trails.set(t, l);
+    l.length > Tt && l.splice(0, l.length - Tt), this.trails.set(t, l);
   }
   /** Remove expired historical track samples. */
   pruneTrails(t) {
@@ -745,7 +745,7 @@ class ye {
     const r = n / 2, l = o / 2, a = Math.min(n, o) / 2 - 26;
     this.layout = { cx: r, cy: l, radius: a };
     const c = performance.now(), d = c / 1e3 / this.options.sweepDurationSec * 360 % 360;
-    this.applyPendingReveals(d, c), this.drawBackground(r, l, a), this.drawGrid(r, l, a), this.drawRim(r, l, a), this.drawSweep(r, l, a, d, c), this.drawTrails(r, l, a, c), this.drawBlips(r, l, a, d, c), this.drawOwnship(r, l);
+    this.applyPendingReveals(d, c), this.drawBackground(r, l, a), this.drawGrid(r, l, a), this.drawRim(r, l, a), this.drawSweep(r, l, a, d, c), this.drawTrails(r, l, a, c), this.drawBlips(r, l, a, d, c), this.drawHome(r, l);
   }
   drawBackground(t, s, e) {
     const { ctx: n } = this, o = n.createRadialGradient(t, s, 0, t, s, e);
@@ -777,7 +777,7 @@ class ye {
       const r = o % 30 === 0, l = o % 90 === 0, a = (o - 90) * S, c = e + (r ? 12 : 6), d = e + (r ? 22 : 11);
       if (n.lineWidth = r ? 2 : 1, n.beginPath(), n.moveTo(t + c * Math.cos(a), s + c * Math.sin(a)), n.lineTo(t + d * Math.cos(a), s + d * Math.sin(a)), n.stroke(), r) {
         const h = e + 22, g = t + h * Math.cos(a), p = s + h * Math.sin(a);
-        l ? (n.font = "bold 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", n.fillStyle = J, n.fillText(["N", "E", "S", "W"][o / 90], g, p), n.font = "9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace") : (n.fillStyle = "rgba(43, 255, 160, 0.75)", n.fillText(String(o).padStart(3, "0"), g, p));
+        l ? (n.font = "bold 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", n.fillStyle = X, n.fillText(["N", "E", "S", "W"][o / 90], g, p), n.font = "9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace") : (n.fillStyle = "rgba(43, 255, 160, 0.75)", n.fillText(String(o).padStart(3, "0"), g, p));
       }
     }
     n.restore();
@@ -786,7 +786,7 @@ class ye {
     const { ctx: r } = this, l = (n - 90) * S, a = (n - nt - 90) * S, c = nt / 360, d = r.createConicGradient(a, t, s);
     d.addColorStop(0, "rgba(43, 255, 160, 0)"), d.addColorStop(c * 0.55, "rgba(43, 255, 160, 0.10)"), d.addColorStop(c * 0.85, "rgba(43, 255, 160, 0.22)"), d.addColorStop(c, "rgba(120, 255, 200, 0.55)"), d.addColorStop(Math.min(1, c + 2e-3), "rgba(43, 255, 160, 0)"), d.addColorStop(1, "rgba(43, 255, 160, 0)"), r.save(), r.beginPath(), r.moveTo(t, s), r.arc(t, s, e, a, l), r.closePath(), r.fillStyle = d, r.fill();
     const h = (o / 1e3 / this.options.sweepDurationSec % 1 + 1) % 1;
-    r.strokeStyle = `rgba(43, 255, 160, ${(0.16 * (1 - h)).toFixed(3)})`, r.lineWidth = 2, r.beginPath(), r.arc(t, s, h * e, 0, A), r.stroke(), r.strokeStyle = J, r.shadowColor = b, r.shadowBlur = 14, r.lineWidth = 2.5, r.beginPath(), r.moveTo(t, s), r.lineTo(t + e * Math.cos(l), s + e * Math.sin(l)), r.stroke(), r.restore();
+    r.strokeStyle = `rgba(43, 255, 160, ${(0.16 * (1 - h)).toFixed(3)})`, r.lineWidth = 2, r.beginPath(), r.arc(t, s, h * e, 0, A), r.stroke(), r.strokeStyle = X, r.shadowColor = b, r.shadowBlur = 14, r.lineWidth = 2.5, r.beginPath(), r.moveTo(t, s), r.lineTo(t + e * Math.cos(l), s + e * Math.sin(l)), r.stroke(), r.restore();
   }
   /**
    * Historical track: a fading phosphor line through the last
@@ -804,10 +804,10 @@ class ye {
       for (let p = 1; p < d.length; p++) {
         const f = d[p - 1], z = d[p], V = n - z.t;
         if (V > a) continue;
-        const T = Math.max(0, 1 - V / a);
-        if (T <= 0) continue;
+        const R = Math.max(0, 1 - V / a);
+        if (R <= 0) continue;
         const L = this.projectPolar(f.distanceNm, f.bearingDeg, t, s, e), x = this.projectPolar(z.distanceNm, z.bearingDeg, t, s, e);
-        o.globalAlpha = g * T, o.beginPath(), o.moveTo(L.x, L.y), o.lineTo(x.x, x.y), o.stroke();
+        o.globalAlpha = g * R, o.beginPath(), o.moveTo(L.x, L.y), o.lineTo(x.x, x.y), o.stroke();
       }
     }
     o.restore();
@@ -820,21 +820,21 @@ class ye {
       if (!d || !d.visible) continue;
       const { distanceNm: h, bearingDeg: g } = d.display;
       if (h > l.rangeNm) continue;
-      const { x: p, y: f } = this.projectPolar(h, g, t, s, e), z = (n - g + 360) % 360, V = Math.max(0, 1 - z / nt), T = Math.pow(V, 1.7), L = 0.2 + 0.8 * T, x = l.selectedId === c.id;
+      const { x: p, y: f } = this.projectPolar(h, g, t, s, e), z = (n - g + 360) % 360, V = Math.max(0, 1 - z / nt), R = Math.pow(V, 1.7), L = 0.2 + 0.8 * R, x = l.selectedId === c.id;
       if (c.onGround) {
-        r.strokeStyle = `rgba(255, 210, 110, ${(0.35 + 0.5 * T).toFixed(3)})`, r.lineWidth = 1.5;
+        r.strokeStyle = `rgba(255, 210, 110, ${(0.35 + 0.5 * R).toFixed(3)})`, r.lineWidth = 1.5;
         const _ = a * 0.75;
         r.strokeRect(p - _ / 2, f - _ / 2, _, _);
       } else {
         const _ = r.createRadialGradient(p, f, 0, p, f, a * 2.6);
-        if (_.addColorStop(0, `rgba(120, 255, 200, ${(0.75 * L).toFixed(3)})`), _.addColorStop(1, "rgba(43, 255, 160, 0)"), r.fillStyle = _, r.beginPath(), r.arc(p, f, a * 2.6, 0, A), r.fill(), r.save(), r.translate(p, f), r.rotate((d.headingDeg ?? g) * S), r.fillStyle = `rgba(140, 255, 205, ${L.toFixed(3)})`, r.shadowColor = b, r.shadowBlur = x ? 16 : 6 + 10 * T, this.tracePlane(a), r.fill(), r.restore(), x) {
-          const X = a + 7 + Math.sin(o / 300) * 1.5;
-          r.strokeStyle = J, r.lineWidth = 1.6, r.setLineDash([5, 4]), r.lineDashOffset = -o / 40, r.beginPath(), r.arc(p, f, X, 0, A), r.stroke(), r.setLineDash([]);
+        if (_.addColorStop(0, `rgba(120, 255, 200, ${(0.75 * L).toFixed(3)})`), _.addColorStop(1, "rgba(43, 255, 160, 0)"), r.fillStyle = _, r.beginPath(), r.arc(p, f, a * 2.6, 0, A), r.fill(), r.save(), r.translate(p, f), r.rotate((d.headingDeg ?? g) * S), r.fillStyle = `rgba(140, 255, 205, ${L.toFixed(3)})`, r.shadowColor = b, r.shadowBlur = x ? 16 : 6 + 10 * R, this.tracePlane(a), r.fill(), r.restore(), x) {
+          const J = a + 7 + Math.sin(o / 300) * 1.5;
+          r.strokeStyle = X, r.lineWidth = 1.6, r.setLineDash([5, 4]), r.lineDashOffset = -o / 40, r.beginPath(), r.arc(p, f, J, 0, A), r.stroke(), r.setLineDash([]);
         }
       }
       if (l.showLabels) {
-        const _ = p >= t, X = a + 4;
-        r.font = "10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", r.textAlign = _ ? "right" : "left", r.fillStyle = x ? "#d7ffeb" : "rgba(160, 255, 210, 0.88)", r.shadowColor = b, r.shadowBlur = x ? 8 : 4, r.fillText(c.callsign, p + (_ ? -X : X), f), r.shadowBlur = 0;
+        const _ = p >= t, J = a + 4;
+        r.font = "10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", r.textAlign = _ ? "right" : "left", r.fillStyle = x ? "#d7ffeb" : "rgba(160, 255, 210, 0.88)", r.shadowColor = b, r.shadowBlur = x ? 8 : 4, r.fillText(c.callsign, p + (_ ? -J : J), f), r.shadowBlur = 0;
       }
     }
     r.restore();
@@ -844,9 +844,14 @@ class ye {
     const { ctx: s } = this, e = t / 10;
     s.beginPath(), s.moveTo(0, -9 * e), s.lineTo(1.6 * e, -4 * e), s.lineTo(7.5 * e, 2.5 * e), s.lineTo(7.5 * e, 4.5 * e), s.lineTo(1.9 * e, 3.2 * e), s.lineTo(1.4 * e, 6.5 * e), s.lineTo(3.6 * e, 8.8 * e), s.lineTo(3.6 * e, 10 * e), s.lineTo(0, 9 * e), s.lineTo(-3.6 * e, 10 * e), s.lineTo(-3.6 * e, 8.8 * e), s.lineTo(-1.4 * e, 6.5 * e), s.lineTo(-1.9 * e, 3.2 * e), s.lineTo(-7.5 * e, 4.5 * e), s.lineTo(-7.5 * e, 2.5 * e), s.lineTo(-1.6 * e, -4 * e), s.closePath();
   }
-  drawOwnship(t, s) {
+  /** Simple house silhouette for the radar centre (home location). */
+  traceHouse(t) {
+    const { ctx: s } = this, e = t / 10;
+    s.beginPath(), s.moveTo(-9 * e, -1 * e), s.lineTo(0, -9 * e), s.lineTo(9 * e, -1 * e), s.lineTo(7 * e, -1 * e), s.lineTo(7 * e, 9 * e), s.lineTo(2.5 * e, 9 * e), s.lineTo(2.5 * e, 3 * e), s.lineTo(-2.5 * e, 3 * e), s.lineTo(-2.5 * e, 9 * e), s.lineTo(-7 * e, 9 * e), s.lineTo(-7 * e, -1 * e), s.closePath();
+  }
+  drawHome(t, s) {
     const { ctx: e } = this;
-    e.save(), e.translate(t, s), e.strokeStyle = J, e.lineWidth = 1.6, e.shadowColor = b, e.shadowBlur = 8, this.tracePlane(7), e.stroke(), e.restore();
+    e.save(), e.translate(t, s), e.strokeStyle = X, e.lineWidth = 1.6, e.lineJoin = "round", e.shadowColor = b, e.shadowBlur = 8, this.traceHouse(8), e.stroke(), e.restore();
   }
 }
 const xe = jt`
@@ -1144,13 +1149,13 @@ function Ce(i, t) {
 function Pe(i) {
   return i === null ? "—" : `${Math.round(i)} kt`;
 }
-function Ee(i) {
+function Te(i) {
   return i === null ? "—" : `${String(Math.round(i)).padStart(3, "0")}°`;
 }
-function Re(i) {
+function Ee(i) {
   return i === null ? "—" : Math.abs(i) < 64 ? "0 fpm" : `${i > 0 ? "▲" : "▼"} ${Math.abs(Math.round(i))} fpm`;
 }
-function Te(i) {
+function Re(i) {
   return i.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 var Ne = Object.defineProperty, De = Object.getOwnPropertyDescriptor, ft = (i, t, s, e) => {
@@ -1177,7 +1182,7 @@ const ke = {
   nm: { min: 5, max: 250, step: 5 },
   mi: { min: 6, max: 290, step: 5 },
   km: { min: 10, max: 465, step: 10 }
-}, Rt = 50;
+}, Et = 50;
 function rt(i) {
   return Math.round(i * 10) / 10;
 }
@@ -1195,7 +1200,7 @@ let tt = class extends O {
   _valueChanged(i) {
     const s = { ...i.detail.value }, e = this._currentUnit(), n = s.distance_unit === "km" || s.distance_unit === "mi" ? s.distance_unit : "nm";
     if (n !== e) {
-      const o = typeof s.range == "number" ? s.range : typeof s.range_nm == "number" ? k(s.range_nm, e) : Rt;
+      const o = typeof s.range == "number" ? s.range : typeof s.range_nm == "number" ? k(s.range_nm, e) : Et;
       s.range = rt(k(ot(o, e), n));
     }
     s.distance_unit = n, typeof s.range != "number" && typeof s.range_nm == "number" && (s.range = rt(k(s.range_nm, n))), delete s.range_nm, this._config = s, this.dispatchEvent(
@@ -1264,7 +1269,7 @@ let tt = class extends O {
   }
   render() {
     if (!this._config) return u;
-    const i = this._config, t = this._currentUnit(), s = typeof i.range == "number" ? i.range : typeof i.range_nm == "number" ? rt(k(i.range_nm, t)) : Rt, e = {
+    const i = this._config, t = this._currentUnit(), s = typeof i.range == "number" ? i.range : typeof i.range_nm == "number" ? rt(k(i.range_nm, t)) : Et, e = {
       update_interval: 10,
       sweep_duration: 6,
       rings: 4,
@@ -1310,12 +1315,12 @@ ft([
 tt = ft([
   Ut("plane-radar-card-editor")
 ], tt);
-var Ue = Object.defineProperty, He = Object.getOwnPropertyDescriptor, R = (i, t, s, e) => {
+var Ue = Object.defineProperty, He = Object.getOwnPropertyDescriptor, E = (i, t, s, e) => {
   for (var n = e > 1 ? void 0 : e ? He(t, s) : t, o = i.length - 1, r; o >= 0; o--)
     (r = i[o]) && (n = (e ? r(t, s, n) : r(n)) || n);
   return e && n && Ue(t, s, n), n;
 };
-const Ie = "0.4.0", v = {
+const Ie = "1.0.0", v = {
   title: "AIRSPACE RADAR",
   location_mode: "ha",
   provider: "adsb.lol",
@@ -1468,7 +1473,7 @@ let $ = class extends O {
             ${t ? `${t.latitude.toFixed(3)}° / ${t.longitude.toFixed(3)}° · ${t.source.toUpperCase()}` : "NO POSITION"}
           </span>
           <span class="seg ${this._error ? "error" : ""}">
-            ${this._error ? "LINK LOST – RETRYING" : this._lastUpdated ? `UPDATED ${Te(this._lastUpdated)}` : "ACQUIRING…"}
+            ${this._error ? "LINK LOST – RETRYING" : this._lastUpdated ? `UPDATED ${Re(this._lastUpdated)}` : "ACQUIRING…"}
           </span>
         </div>
       </ha-card>
@@ -1478,8 +1483,8 @@ let $ = class extends O {
     const s = [
       ["Altitude", Ce(i.altitudeFt, i.onGround)],
       ["Ground speed", Pe(i.speedKt)],
-      ["Track", Ee(i.headingDeg)],
-      ["Vert. rate", Re(i.verticalRateFpm)],
+      ["Track", Te(i.headingDeg)],
+      ["Vert. rate", Ee(i.verticalRateFpm)],
       ["Distance", at(i.distanceNm, t)],
       ["Bearing", `${String(Math.round(i.bearingDeg)).padStart(3, "0")}°`],
       ["Squawk", i.squawk ?? "—"],
@@ -1512,25 +1517,25 @@ let $ = class extends O {
   }
 };
 $.styles = xe;
-R([
+E([
   gt({ attribute: !1 })
 ], $.prototype, "hass", 2);
-R([
+E([
   I()
 ], $.prototype, "_config", 2);
-R([
+E([
   I()
 ], $.prototype, "_aircraft", 2);
-R([
+E([
   I()
 ], $.prototype, "_selected", 2);
-R([
+E([
   I()
 ], $.prototype, "_error", 2);
-R([
+E([
   I()
 ], $.prototype, "_lastUpdated", 2);
-$ = R([
+$ = E([
   Ut("plane-radar-card")
 ], $);
 function N(i, t, s) {
