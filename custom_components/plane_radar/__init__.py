@@ -2,7 +2,8 @@
 
 Installs two things:
 
-* ``/api/plane_radar/plane-radar-card.js`` — the Lovelace card bundle
+* ``/plane_radar/plane-radar-card.js`` — the Lovelace card bundle, served
+  publicly and auto-registered as a Lovelace resource (storage-mode dashboards)
 * ``/api/plane_radar/aircraft`` — an authenticated caching proxy to the free
   community ADS-B aggregators (browsers cannot call them directly due to
   missing CORS headers)
@@ -13,28 +14,44 @@ The integration itself holds no state besides the response cache.
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.const import EVENT_HOMEASSISTANT_STARTED
+from homeassistant.core import HomeAssistant, CoreState
 
-from .api import PlaneRadarAircraftView, PlaneRadarCardView
+from .api import PlaneRadarAircraftView
 from .const import DOMAIN
+from .frontend import async_register_lovelace_cards, async_register_static_path
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
-    """Set up integration-wide state (no YAML configuration supported)."""
+    """Serve the card bundle and (re)register it once HA has started."""
     hass.data.setdefault(DOMAIN, {})
+
+    await async_register_static_path(hass)
+
+    async def _register(_event=None) -> None:
+        await async_register_lovelace_cards(hass)
+
+    if hass.state == CoreState.running:
+        await _register()
+    else:
+        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STARTED, _register)
+
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Register views once, regardless of how many times the entry is reloaded."""
+    """Register the API view once, regardless of reload count."""
     domain_data = hass.data.setdefault(DOMAIN, {})
     domain_data.setdefault("cache", {})
     domain_data.setdefault("locks", {})
 
     if not domain_data.get("views_registered"):
         hass.http.register_view(PlaneRadarAircraftView(hass))
-        hass.http.register_view(PlaneRadarCardView(hass))
         domain_data["views_registered"] = True
+
+    # Make sure the card resource is registered even if the integration was
+    # added after HA started.
+    await async_register_lovelace_cards(hass)
 
     return True
 

@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Plane Radar",
-        "description": "Sets up the Plane Radar integration. It serves the radar card at `/api/plane_radar/plane-radar-card.js` and relays ADS-B aircraft data to your dashboards. No configuration is required — add the card resource after setup (see the documentation), then drop the Plane Radar card into a dashboard."
+        "description": "Sets up the Plane Radar integration. It relays ADS-B aircraft data to your dashboards and auto-registers the Plane Radar card as a Lovelace resource (storage-mode dashboards). YAML dashboards need the manual resource snippet from the documentation. No options are required — the radar is configured on the card itself."
       }
     },
     "abort": {

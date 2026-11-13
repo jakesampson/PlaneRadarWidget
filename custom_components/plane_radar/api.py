@@ -2,17 +2,13 @@
 
 from __future__ import annotations
 
-import os
-from typing import Any
-
 from aiohttp import web
 
 from homeassistant.components.http import HomeAssistantView
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 
 from .const import (
     DEFAULT_PROVIDER,
-    DOMAIN,
     MAX_RANGE_NM,
     MIN_RANGE_NM,
     PROVIDERS,
@@ -67,37 +63,3 @@ class PlaneRadarAircraftView(HomeAssistantView):
     @staticmethod
     def _json_error(message: str, status: int) -> web.Response:
         return web.json_response({"error": message}, status=status)
-
-
-class PlaneRadarCardView(HomeAssistantView):
-    """Public static bundle: GET /api/plane_radar/plane-radar-card.js
-
-    Serves the card's built JavaScript so users only need to add a single
-    dashboard resource — no file copying, no HACS frontend setup. Public by
-    design: it is a static asset and must load in a <script type="module">
-    tag, which cannot send the HA auth header.
-    """
-
-    url = "/api/plane_radar/plane-radar-card.js"
-    name = "api:plane_radar:card"
-    requires_auth = False
-
-    @callback
-    def __init__(self, hass: HomeAssistant) -> None:
-        self._bundle = os.path.join(os.path.dirname(__file__), "static", "plane-radar-card.js")
-
-    async def get(self, request: web.Request) -> web.Response:
-        try:
-            with open(self._bundle, "rb") as handle:
-                body = handle.read()
-        except OSError:
-            return web.Response(
-                text="plane-radar-card.js bundle missing — reinstall the integration or rebuild the frontend",
-                status=404,
-                content_type="text/plain",
-            )
-        return web.Response(
-            body=body,
-            content_type="application/javascript",
-            headers={"Cache-Control": "public, max-age=3600"},
-        )

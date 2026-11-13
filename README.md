@@ -17,8 +17,11 @@ tiny authenticated, caching proxy inside Home Assistant: the card talks to
 `/api/plane_radar/aircraft` on your own instance — fast, private, and within
 upstream rate limits (responses are cached ~10 s and shared across all cards).
 
-The same integration also serves the card's JavaScript bundle, so there is
-nothing to copy into `www/`.
+* `/plane_radar/plane-radar-card.js` — the Lovelace card bundle, served publicly and auto-registered as a Lovelace resource (storage-mode dashboards)
+* `/api/plane_radar/aircraft` — an authenticated caching proxy to the free
+  community ADS-B aggregators (browsers cannot call them directly due to
+  missing CORS headers). The card calls Home Assistant's own API, same-origin,
+  with your normal credentials.
 
 ---
 
@@ -37,14 +40,20 @@ nothing to copy into `www/`.
 **Settings → Devices & Services → Add Integration → Plane Radar** → confirm.
 No options are required.
 
-### 3. Add the dashboard resource
+### 3. Card resource — nothing to do (usually)
 
-**Settings → Dashboards → ⋮ → Resources → Add resource**
+If your dashboard is **storage-mode** (the default when you build dashboards in
+the UI), the integration automatically registers the card as a Lovelace
+resource — reload your browser and the **Plane Radar Card** shows up when
+adding a card.
 
-- URL: `/api/plane_radar/plane-radar-card.js`
-- Type: **JavaScript Module**
+**YAML-mode dashboards** must add the resource manually:
 
-Hard-refresh the browser (Ctrl+F5).
+```yaml
+resources:
+  - url: /plane_radar/plane-radar-card.js?v=0.1.0
+    type: module
+```
 
 ### 4. Add a card
 

@@ -1,13 +1,13 @@
 {
   "domain": "plane_radar",
   "name": "Plane Radar",
-  "codeowners": ["@YOUR_GITHUB_USERNAME"],
+  "codeowners": ["@jakesampson"],
   "config_flow": true,
   "dependencies": ["http"],
-  "documentation": "https://github.com/YOUR_GITHUB_USERNAME/PlaneRadarWidget",
+  "documentation": "https://github.com/jakesampson/PlaneRadarWidget",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/YOUR_GITHUB_USERNAME/PlaneRadarWidget/issues",
+  "issue_tracker": "https://github.com/jakesampson/PlaneRadarWidget/issues",
   "requirements": [],
   "version": "0.1.0"
 }
