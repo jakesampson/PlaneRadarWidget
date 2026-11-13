@@ -1113,7 +1113,7 @@ const Te = {
   show_labels: "Show callsign labels"
 }, Ne = {
   nm: { min: 5, max: 250, step: 5 },
-  mi: { min: 5, max: 290, step: 5 },
+  mi: { min: 6, max: 290, step: 5 },
   km: { min: 10, max: 465, step: 10 }
 }, Pt = 50;
 function st(i) {

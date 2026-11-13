@@ -22,7 +22,7 @@ const LABELS: Record<string, string> = {
 /** Slider bounds for the radar range, expressed in each supported unit. */
 const RANGE_BOUNDS: Record<DistanceUnit, { min: number; max: number; step: number }> = {
   nm: { min: 5, max: 250, step: 5 },
-  mi: { min: 5, max: 290, step: 5 },
+  mi: { min: 6, max: 290, step: 5 },
   km: { min: 10, max: 465, step: 10 },
 };
 
