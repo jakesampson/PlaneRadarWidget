@@ -1063,7 +1063,7 @@ function xe(i) {
   return Array.isArray(i?.ac) ? i.ac : [];
 }
 async function Ae(i, t, e, s, n, o) {
-  const r = Math.min(Ht, Math.max(It, Math.round(n))), l = `lat=${e}&lon=${s}&radius=${r}&provider=${encodeURIComponent(t)}`;
+  const r = Math.min(Ht, Math.max(It, Math.ceil(n))), l = `lat=${e}&lon=${s}&radius=${r}&provider=${encodeURIComponent(t)}`;
   let a;
   if (o) {
     const c = o.includes("?") ? "&" : "?", d = await fetch(`${o}${c}${l}`, {

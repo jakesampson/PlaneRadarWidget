@@ -86,7 +86,9 @@ export async function fetchAircraft(
   radiusNm: number,
   apiUrl?: string,
 ): Promise<Aircraft[]> {
-  const radius = Math.min(MAX_RANGE_NM, Math.max(MIN_RANGE_NM, Math.round(radiusNm)));
+  // Round up so the upstream query always covers the configured radius after
+  // converting from miles/kilometres into whole nautical miles.
+  const radius = Math.min(MAX_RANGE_NM, Math.max(MIN_RANGE_NM, Math.ceil(radiusNm)));
   const query = `lat=${lat}&lon=${lon}&radius=${radius}&provider=${encodeURIComponent(provider)}`;
 
   let data: any;
